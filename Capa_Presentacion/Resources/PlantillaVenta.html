@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Formato de Asignación de Equipo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            background: #f8f8f8;
+            color: #333;
+        }
+
+        .container {
+            background: white;
+            padding: 30px;
+            max-width: 800px;
+            margin: auto;
+            border: 1px solid #ccc;
+            box-shadow: 0 0 10px #ccc;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+
+            .header img {
+                width: 120px;
+                height: auto;
+                margin-right: 20px;
+            }
+
+        .header-text {
+            text-align: center;
+        }
+
+            .header-text h1 {
+                font-size: 22px;
+                margin: 0;
+            }
+
+            .header-text h2 {
+                font-size: 18px;
+                margin: 5px 0 0;
+            }
+
+        p {
+            text-align: justify;
+            line-height: 1.6;
+        }
+
+        .notas {
+            background: #f0f0f0;
+            padding: 15px;
+            margin-top: 30px;
+            border-left: 4px solid #007bff;
+        }
+
+            .notas ul {
+                margin: 0;
+                padding-left: 20px;
+            }
+
+        .firmas {
+            margin-top: 50px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .firma-box {
+            width: 45%;
+            text-align: center;
+        }
+
+        .firma-imagenes {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 1px;
+        }
+
+            .firma-imagenes img {
+                height: 100px;
+                margin: 0 10px;
+            }
+
+        .linea-firma {
+            border-top: 1px solid #000;
+            margin: 5px auto 2px;
+            width: 100%;
+            height: 1px;
+        }
+
+        .nombre {
+            font-weight: bold;
+            margin-top: 5px;
+        }
+
+        .cargo {
+            font-style: italic;
+        }
+
+        table.border {
+            border-collapse: collapse;
+            width: 100%;
+            font-size: 12px;
+        }
+
+            table.border th, table.border td {
+                text-align: center;
+                padding: 5px;
+                border: 1px solid black;
+            }
+
+        .datos-generales {
+            margin-top: 20px;
+            margin-bottom: 20px;
+            font-size: 12px;
+        }
+
+            .datos-generales label {
+                font-size: 12px;
+            }
+    </style>
+</head>
+<body>
+    <div class="container">
+
+        <!-- Encabezado con logo -->
+        <div class="header">
+            <img src="logo.png" alt="Logo Farmacias Saba" />
+            <div class="header-text">
+                <h1>FARMACIAS SABA S.A.</h1>
+                <h2>FORMATO DE ASIGNACIÓN DE EQUIPO DE CÓMPUTO</h2>
+            </div>
+        </div>
+
+        <p>Farmacias Saba S.A. hace formal entrega de los siguientes equipos de trabajo, los cuales son para uso exclusivo de las funciones propias de la sucursal o puesto asignado.</p>
+
+
+        <hr /> <!-- Línea horizontal aquí -->
+        <!-- Datos Generales -->
+        <table border="0" class="datos-generales">
+            <tr>
+                <td style="width: 20%;"><label style="font-weight: bold;">Código:</label></td>
+                <td style="width: 20%;"><label>@docframacia</label></td>
+            </tr>
+            <tr>
+                <td><label style="font-weight: bold;">Nombre:</label></td>
+                <td><label>@nombre</label></td>
+            </tr>
+            <tr>
+                <td><label style="font-weight: bold;">Fecha Registro:</label></td>
+                <td><label>@fecharegistro</label></td>
+            </tr>
+            <tr>
+                <td><label style="font-weight: bold;">Usuario Registro:</label></td>
+                <td><label>@usuarioregistro</label></td>
+            </tr>
+            <tr>
+                <td><label style="font-weight: bold;">Número Documento:</label></td>
+                <td><label>@numerodocumento</label></td>
+            </tr>
+        </table>
+
+        <!-- Tabla Detalle Productos -->
+        <table class="border">
+            <thead>
+                <tr style="background-color:#CACACA">
+                    <th>Producto</th>
+                    <th>Cantidad</th>
+                    <th>Serial</th>
+                    <th>Caja</th>
+                </tr>
+            </thead>
+            <tbody>
+                @filas
+            </tbody>
+        </table>
+
+        <!-- Notas importantes -->
+        <div class="notas">
+            <p><strong>📄 Notas Importantes</strong></p>
+            <ul>
+                <li>Este documento certifica que el colaborador ha recibido en buen estado el equipo detallado.</li>
+                <li>El equipo entregado es propiedad de Farmacias Saba S.A.</li>
+                <li>Su uso está restringido exclusivamente a actividades laborales dentro del horario y funciones correspondientes.</li>
+                <li>En caso de pérdida o daño causado por negligencia del personal, el costo total será asumido por el responsable y se trasladará a cobro correspondiente.</li>
+                <li>Cualquier anomalía debe ser reportada inmediatamente al área de Sistemas.</li>
+            </ul>
+        </div>
+
+        <!-- Firmas -->
+        <div class="firmas">
+            <div class="firma-box">
+                <div class="firma-imagenes" style="height: 100px;"></div>
+                <div class="linea-firma"></div>
+                <div class="nombre">ADMINISTRADOR</div>
+                <div class="cargo">FIRMA / SELLO</div>
+            </div>
+            <div class="firma-box">
+                <div class="firma-imagenes">
+                    <img src="firma.png" alt="Firma Digital Alexander" />
+                    <img src="sello.png" alt="Sello Digital Alexander" />
+                </div>
+                <div class="linea-firma"></div>
+                <div class="nombre">Alexander Gutiérrez</div>
+                <div class="cargo">Gerente IT &amp; ST</div>
+            </div>
+        </div>
+
+    </div>
+</body>
+</html> 

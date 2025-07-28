@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Formato de Asignación de Equipo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            color: #333;
+            margin: 20px;
+        }
+
+        h1, h2 {
+            margin: 0;
+            padding: 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .datos-generales {
+            margin: 20px 0;
+        }
+
+        .datos-generales td {
+            padding: 4px 6px;
+        }
+
+        .tabla-detalle th, .tabla-detalle td {
+            border: 1px solid #000;
+            padding: 6px;
+            text-align: center;
+        }
+
+        .tabla-detalle th {
+            background-color: #CACACA;
+        }
+
+        .notas {
+            background: #f0f0f0;
+            padding: 10px;
+            margin-top: 20px;
+            border-left: 4px solid #007bff;
+        }
+
+        .firmas {
+            margin-top: 50px;
+            width: 100%;
+            table-layout: fixed;
+        }
+
+        .firma-box {
+            width: 100%;
+            text-align: center;
+        }
+
+        .linea-firma {
+            border-top: 1px solid #000;
+            margin: 3px auto 2px;
+            width: 80%;
+        }
+
+        .firma-imagenes {
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            gap: 10px;
+            height: 65px; /* Más compacto */
+        }
+
+        .firma-imagenes img {
+            height: 60px;
+        }
+         
+        .header {
+    display: flex;
+    align-items: flex-start; /* ← importante */
+    justify-content: center;
+    margin-bottom: 30px;
+    gap: 20px; /* espacio horizontal entre logo y texto */
+}
+
+.header img {
+    width: 120px; /* ajustá según preferencia */
+    height: auto;
+}
+
+.header-text h1 {
+    font-size: 22px;
+    margin: 0;
+    margin-top: 5px; /* alineación visual con logo */
+}
+
+.header-text h2 {
+    font-size: 18px;
+    margin: 5px 0 0;
+}
+
+            </style>
+</head>
+<body>
+
+  <!-- Encabezado con logo -->
+    <table style="width: 100%; margin-bottom: 30px;">
+  <tr>
+    <td style="width: 130px; padding-left: 90px;">
+      <img src="logo.png" style="width: 120px; height: auto;" alt="Logo Farmacias Saba" />
+    </td>
+    <td style="vertical-align: middle; text-align: left; padding-left: 30px; white-space: nowrap;">
+      <h1 style="font-size: 22px; margin: 0;">FARMACIAS SABA S.A.</h1>
+      <h2 style="font-size: 18px; margin: 5px 0 0;">FORMATO DE ASIGNACIÓN DE EQUIPO DE CÓMPUTO</h2>
+    </td>
+  </tr>
+</table>
+
+
+    <p style="text-align: justify;">
+        Farmacias Saba S.A. hace formal entrega de los siguientes equipos de trabajo, los cuales son para uso exclusivo de las funciones propias de la sucursal o puesto asignado.
+    </p>
+
+    <hr>
+
+    <!-- Datos generales -->
+    <table class="datos-generales">
+        <tr>
+            <td style="width: 30%;"><strong>Código:</strong></td>
+            <td>FS28</td>
+        </tr>
+        <tr>
+            <td><strong>Nombre:</strong></td>
+            <td>Farmacia Saba SEBACO</td>
+        </tr>
+        <tr>
+            <td><strong>Fecha Registro:</strong></td>
+            <td>27/07/2025</td>
+        </tr>
+        <tr>
+            <td><strong>Usuario Registro:</strong></td>
+            <td>Jose Luis Lopez</td>
+        </tr>
+        <tr>
+            <td><strong>Número Documento:</strong></td>
+            <td>FS28-00003</td>
+        </tr>
+    </table>
+
+    <!-- Tabla de equipos -->
+    <table class="tabla-detalle">
+        <thead>
+            <tr>
+                <th>Equipo</th>
+                <th>Marca</th>
+                <th>Cantidad</th>
+                <th>Serial</th>
+                <th>Caja</th>
+            </tr>
+        </thead>
+        <tbody>
+            
+                        <tr>
+                            <td>Teclado</td>
+                            <td>Tek Refurbs</td>
+                            <td>1</td>
+                            <td>jjj</td>
+                            <td>jj</td>
+                        </tr>
+        </tbody>
+    </table>
+
+    <!-- Notas -->
+    <div class="notas">
+        <p><strong>📄 Notas Importantes</strong></p>
+        <ul>
+            <li>Este documento certifica que el colaborador ha recibido en buen estado el equipo detallado.</li>
+            <li>El equipo entregado es propiedad de Farmacias Saba S.A.</li>
+            <li>Su uso está restringido exclusivamente a actividades laborales dentro del horario y funciones correspondientes.</li>
+            <li>En caso de pérdida o daño causado por negligencia del personal, el costo total será asumido por el responsable y se trasladará a cobro correspondiente.</li>
+            <li>Cualquier anomalía debe ser reportada inmediatamente al área de Sistemas.</li>
+        </ul>
+    </div>
+
+    <!-- Firmas -->
+    <table class="firmas">
+        <tr>
+            <td class="firma-box">
+                <div class="firma-imagenes"></div>
+                <div class="linea-firma"></div>
+                <div><strong>ADMINISTRADOR</strong></div>
+                <div><em>FIRMA / SELLO</em></div>
+            </td>
+            <td class="firma-box">
+                <div class="firma-imagenes">
+                    <img src="firma.png" alt="Firma Digital Alexander">
+                    <img src="sello.png" alt="Sello Digital Alexander">
+                </div>
+                <div class="linea-firma"></div>
+                <div><strong>Alexander Gutiérrez</strong></div>
+                <div><em>Gerente IT & ST</em></div>
+            </td>
+        </tr>
+    </table>
+
+</body>
+</html>

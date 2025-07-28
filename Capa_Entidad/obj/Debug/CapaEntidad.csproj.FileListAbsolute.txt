@@ -1,0 +1,6 @@
+C:\Users\Jose Luis\Downloads\034_CursoSistemaVentaEscritorio-master\034_CursoSistemaVentaEscritorio-master\CapaEntidad\bin\Debug\CapaEntidad.dll
+C:\Users\Jose Luis\Downloads\034_CursoSistemaVentaEscritorio-master\034_CursoSistemaVentaEscritorio-master\CapaEntidad\bin\Debug\CapaEntidad.pdb
+C:\Users\Jose Luis\Downloads\034_CursoSistemaVentaEscritorio-master\034_CursoSistemaVentaEscritorio-master\CapaEntidad\obj\Debug\CapaEntidad.csproj.AssemblyReference.cache
+C:\Users\Jose Luis\Downloads\034_CursoSistemaVentaEscritorio-master\034_CursoSistemaVentaEscritorio-master\CapaEntidad\obj\Debug\CapaEntidad.csproj.CoreCompileInputs.cache
+C:\Users\Jose Luis\Downloads\034_CursoSistemaVentaEscritorio-master\034_CursoSistemaVentaEscritorio-master\CapaEntidad\obj\Debug\CapaEntidad.dll
+C:\Users\Jose Luis\Downloads\034_CursoSistemaVentaEscritorio-master\034_CursoSistemaVentaEscritorio-master\CapaEntidad\obj\Debug\CapaEntidad.pdb

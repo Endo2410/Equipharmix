@@ -41,16 +41,43 @@ namespace CapaPresentacion
 
                 if (usuario != null)
                 {
-                    // Desencripta la contraseña almacenada en la base de datos
-                    string claveAlmacenadaDesencriptada = usuario.Clave;
-
-                    // Encripta la contraseña ingresada por el usuario para compararla con la contraseña almacenada
-                    string claveIngresadaEncriptada = Encriptacion.EncriptarContraseña(txtpassword.Text);
-
-                    // Compara las contraseñas encriptadas
-                    if (claveIngresadaEncriptada == claveAlmacenadaDesencriptada)
+                    // 🛑 Validar si el usuario está inactivo
+                    if (!usuario.Estado)
                     {
-                        // Autenticación exitosa
+                        lbl_error.Text = "Su usuario está inactivo." + Environment.NewLine +
+                        "Contacte al administrador.";
+                        lbl_error.Visible = true;
+                        txtusuario.Clear();
+                        txtpassword.Clear();
+                        txtusuario.Focus();
+                        return; // detener el flujo de login
+                    }
+
+                    string claveAlmacenada = usuario.Clave;
+
+                    // 🧠 Verifica si la contraseña almacenada tiene salt (nuevo formato)
+                    bool accesoPermitido = false;
+                    if (claveAlmacenada.Contains(":"))
+                    {
+                        accesoPermitido = Encriptacion.VerificarContraseña(txtpassword.Text, claveAlmacenada);
+                    }
+                    else
+                    {
+                        // 🕰 Compatibilidad con contraseñas antiguas (sin salt)
+                        string hashAntiguo = Encriptacion.EncriptarContraseñaAntigua(txtpassword.Text);
+                        accesoPermitido = (txtpassword.Text == claveAlmacenada || hashAntiguo == claveAlmacenada);
+
+                        // ✅ Si entra con formato viejo, lo actualizamos al nuevo formato (salt)
+                        if (accesoPermitido)
+                        {
+                            string nuevaClave = Encriptacion.EncriptarContraseña(txtpassword.Text);
+                            usuario.Clave = nuevaClave;
+                            new CN_Usuario().ActualizarClave(usuario.IdUsuario, nuevaClave);
+                        }
+                    }
+
+                    if (accesoPermitido)
+                    {
                         this.Hide();
                         Bienvenido bienvenido = new Bienvenido(usuario);
                         bienvenido.ShowDialog();
@@ -100,7 +127,7 @@ namespace CapaPresentacion
 
         private void linrecuperacion_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            frmrecuperar frmrecuperar = new frmrecuperar();
+            frmbaja frmrecuperar = new frmbaja();
             frmrecuperar.Show();
             this.Hide();
         }

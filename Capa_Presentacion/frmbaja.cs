@@ -14,17 +14,25 @@ using ClosedXML.Excel;
 
 namespace CapaPresentacion
 {
-    public partial class frmrecuperar : Form
+    public partial class frmbaja : Form
     {
 
         private CN_Acta objCN_Acta = new CN_Acta();
-        public frmrecuperar()
+        public frmbaja()
         {
             InitializeComponent();
         }
 
         private void frmrecuperar_Load(object sender, EventArgs e)
         {
+            // Obtiene los permisos del usuario logueado
+            List<Permiso> listaPermisos = new CN_Permiso().Listar(Inicio.usuarioActual.IdUsuario);
+
+            // Controla visibilidad de los botones según permisos
+            btneliminar.Visible = UtilPermisos.TienePermisoAccion(listaPermisos, "submenuequiposbaja", "btneliminar");
+            btnlimpiar.Visible = UtilPermisos.TienePermisoAccion(listaPermisos, "submenuequiposbaja", "btnlimpiar");
+            btnexportar.Visible = UtilPermisos.TienePermisoAccion(listaPermisos, "submenuequiposbaja", "btnexportar");
+
             try
             {
                 CargarEquiposAutorizados();

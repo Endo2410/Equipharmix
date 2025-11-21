@@ -19,6 +19,7 @@ namespace CapaPresentacion
     {
 
         private CN_Acta objCN_Acta = new CN_Acta();
+        private CN_Prestamo objCN_Prestamo = new CN_Prestamo();
         private static Usuario usuarioActual;
 
         public frmactaautorizacion(Usuario objusuario)
@@ -31,128 +32,77 @@ namespace CapaPresentacion
         {
             try
             {
-                if (dgvdata.Columns.Count == 0)
+                // Crear columna de selección si no existe
+                if (!dgvdata.Columns.Contains("btnseleccionar"))
                 {
-                    // Columna botón seleccionar
-                    DataGridViewImageColumn btnSeleccionar = new DataGridViewImageColumn();
-                    btnSeleccionar.Name = "btnseleccionar";
-                    btnSeleccionar.HeaderText = "";
-                    btnSeleccionar.Image = Properties.Resources.check20;
-                    btnSeleccionar.ImageLayout = DataGridViewImageCellLayout.Zoom;
-                    btnSeleccionar.Width = 30;
-                    btnSeleccionar.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
-                    dgvdata.Columns.Add(btnSeleccionar);
-
-                    // Columnas datos
-                    dgvdata.Columns.Add("NumeroDocumento", "Documento");
-                    dgvdata.Columns.Add("FechaRegistro", "Fecha");
-                    dgvdata.Columns.Add("NombreFarmacia", "Farmacia");
-                    dgvdata.Columns.Add("EstadoAutorizacion", "Autorización");
-                    dgvdata.Columns.Add("CreadorActa", "Usuario Solicitante");
-
-                    // Columna margen
-                    DataGridViewTextBoxColumn columnaMargen = new DataGridViewTextBoxColumn();
-                    columnaMargen.Name = "colMargen";
-                    columnaMargen.HeaderText = "";
-                    columnaMargen.ReadOnly = true;
-                    columnaMargen.Width = 30;
-                    columnaMargen.SortMode = DataGridViewColumnSortMode.NotSortable;
-                    columnaMargen.DefaultCellStyle.BackColor = dgvdata.BackgroundColor;
-                    columnaMargen.DefaultCellStyle.SelectionBackColor = dgvdata.BackgroundColor;
-                    columnaMargen.DefaultCellStyle.ForeColor = dgvdata.BackgroundColor;
-                    columnaMargen.DefaultCellStyle.SelectionForeColor = dgvdata.BackgroundColor;
-                    columnaMargen.DividerWidth = 0;
-                    dgvdata.Columns.Add(columnaMargen);
-
-                    foreach (DataGridViewColumn col in dgvdata.Columns)
-                    {
-                        if (col.Name == "NombreFarmacia")
-                        {
-                            col.Width = 150;
-                            col.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
-                        }
-                        else if (col.Name != "btnseleccionar" && col.Name != "colMargen")
-                        {
-                            col.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-                        }
-                        else
-                        {
-                            col.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
-                        }
-                    }
+                    DataGridViewImageColumn colBtn = new DataGridViewImageColumn();
+                    colBtn.Name = "btnseleccionar";
+                    colBtn.HeaderText = "";
+                    colBtn.ImageLayout = DataGridViewImageCellLayout.Normal;
+                    colBtn.Width = 30;
+                    dgvdata.Columns.Insert(0, colBtn);
                 }
 
-                CargarEquiposPendientes();
-
+                // Llenar combo de búsqueda
                 cbobusqueda.Items.Clear();
                 foreach (DataGridViewColumn columna in dgvdata.Columns)
                 {
-                    if (columna.Visible && columna.Name != "btnseleccionar" && columna.Name != "colMargen")
+                    if (columna.Visible && columna.Name != "btnseleccionar")
                     {
-                        cbobusqueda.Items.Add(new OpcionCombo() { Valor = columna.Name, Texto = columna.HeaderText });
+                        cbobusqueda.Items.Add(new OpcionCombo()
+                        {
+                            Valor = columna.Name,
+                            Texto = columna.HeaderText
+                        });
                     }
                 }
                 cbobusqueda.DisplayMember = "Texto";
                 cbobusqueda.ValueMember = "Valor";
-                if (cbobusqueda.Items.Count > 0) cbobusqueda.SelectedIndex = 0;
+                if (cbobusqueda.Items.Count > 0)
+                    cbobusqueda.SelectedIndex = 0;
+
+                CargarPendientes();
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error al cargar datos:\n" + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Error al cargar datos:\n" + ex.Message, "Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
-        private void CargarEquiposPendientes()
+        private void CargarPendientes()
         {
-            try
+            dgvdata.Rows.Clear();
+
+            // Obtener asignaciones
+            var listaAsignaciones = objCN_Acta.ObtenerEquiposPendientes();
+            foreach (var item in listaAsignaciones)
             {
-                dgvdata.Rows.Clear();
-                var lista = objCN_Acta.ObtenerEquiposPendientes();
-
-                // Agrupar por NumeroDocumento
-                var documentosAgrupados = lista
-                    .GroupBy(x => x.NumeroDocumento)
-                    .Select(g => g.First()) // solo una fila por documento
-                    .ToList();
-
-                foreach (var item in documentosAgrupados)
-                {
-                    dgvdata.Rows.Add(
-                        Properties.Resources.check20,
-                        item.NumeroDocumento,
-                        item.FechaRegistro.ToShortDateString(),
-                        item.oFarmacia.Nombre,
-                        item.EstadoAutorizacion,
-                        item.oUsuarioSolicitante.NombreCompleto
-                        
-                    );
-                }
+                dgvdata.Rows.Add(
+                    "", // columna de selección
+                    "ASIGNACIÓN",
+                    item.NumeroDocumento,
+                    item.FechaRegistro.ToShortDateString(),
+                    item.oFarmacia.Nombre,
+                    item.EstadoAutorizacion,
+                    item.oUsuarioSolicitante.NombreCompleto                 
+                );
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error al cargar equipos pendientes:\n" + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
 
-
-
-        private void dgvdata_CellContentClick(object sender, DataGridViewCellEventArgs e)
-        {
-            try
+            // Obtener préstamos
+            var listaPrestamos = objCN_Prestamo.ObtenerPrestamosPendientes();
+            foreach (var item in listaPrestamos)
             {
-                if (e.RowIndex >= 0 && dgvdata.Columns[e.ColumnIndex].Name == "btnseleccionar")
-                {
-                    string numeroDocumento = dgvdata.Rows[e.RowIndex].Cells["NumeroDocumento"].Value.ToString();
-                    mdActa detalle = new mdActa(numeroDocumento, usuarioActual.IdUsuario);
-                    if (detalle.ShowDialog() == DialogResult.OK)
-                    {
-                        frmactaautorizacion_Load(null, null); // recargar lista
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error al abrir detalle:\n" + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                dgvdata.Rows.Add(
+                    "",
+                    "PRÉSTAMO",
+                    item.NumeroDocumento,
+                    item.FechaRegistro.ToShortDateString(),
+                    item.oFarmacia?.Nombre ?? "",
+                    item.EstadoAutorizacion,
+                    item.oUsuarioSolicitante.NombreCompleto
+                    
+                );
             }
         }
 
@@ -162,25 +112,21 @@ namespace CapaPresentacion
             {
                 string columnaFiltro = ((OpcionCombo)cbobusqueda.SelectedItem).Valor.ToString();
 
-                if (dgvdata.Rows.Count > 0)
+                foreach (DataGridViewRow row in dgvdata.Rows)
                 {
-                    foreach (DataGridViewRow row in dgvdata.Rows)
-                    {
-                        if (row.Cells[columnaFiltro].Value != null &&
-                            row.Cells[columnaFiltro].Value.ToString().Trim().ToUpper().Contains(txtbusqueda.Text.Trim().ToUpper()))
-                        {
-                            row.Visible = true;
-                        }
-                        else
-                        {
-                            row.Visible = false;
-                        }
-                    }
+                    bool coincide =
+                        row.Cells[columnaFiltro].Value != null &&
+                        row.Cells[columnaFiltro].Value.ToString().Trim()
+                        .ToUpper()
+                        .Contains(txtbusqueda.Text.Trim().ToUpper());
+
+                    row.Visible = coincide;
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error al buscar:\n" + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Error al buscar:\n" + ex.Message, "Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -196,7 +142,51 @@ namespace CapaPresentacion
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error al limpiar búsqueda:\n" + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Error al limpiar búsqueda:\n" + ex.Message, "Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void dgvdata_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
+        {
+            try
+            {
+                if (e.RowIndex < 0) return;
+
+                if (e.ColumnIndex == dgvdata.Columns["btnseleccionar"].Index)
+                {
+                    e.Paint(e.CellBounds, DataGridViewPaintParts.All);
+
+                    var img = Properties.Resources.check20;
+                    int x = e.CellBounds.Left + (e.CellBounds.Width - img.Width) / 2;
+                    int y = e.CellBounds.Top + (e.CellBounds.Height - img.Height) / 2;
+
+                    e.Graphics.DrawImage(img, new Rectangle(x, y, img.Width, img.Height));
+                    e.Handled = true;
+                }
+            }
+            catch { }
+        }
+
+        private void dgvdata_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex >= 0 && dgvdata.Columns[e.ColumnIndex].Name == "btnseleccionar")
+            {
+                string numeroDocumento = dgvdata.Rows[e.RowIndex].Cells["NumeroDocumento"].Value.ToString();
+                string tipo = dgvdata.Rows[e.RowIndex].Cells["TipoMovimiento"].Value.ToString();
+
+                if (tipo == "ASIGNACIÓN")
+                {
+                    mdActa detalle = new mdActa(numeroDocumento, usuarioActual.IdUsuario);
+                    if (detalle.ShowDialog() == DialogResult.OK)
+                        CargarPendientes();
+                }
+                else if (tipo == "PRÉSTAMO")
+                {
+                    mdActa detalle = new mdActa(numeroDocumento, usuarioActual.IdUsuario);
+                    if (detalle.ShowDialog() == DialogResult.OK)
+                        CargarPendientes();
+                }
             }
         }
     }

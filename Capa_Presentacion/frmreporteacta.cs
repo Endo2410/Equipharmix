@@ -2,6 +2,9 @@
 using CapaNegocio;
 using CapaPresentacion.Utilidades;
 using ClosedXML.Excel;
+using iTextSharp.text.pdf;
+using iTextSharp.tool.xml;
+using iTextSharp.text;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -15,73 +18,78 @@ using System.Windows.Forms;
 
 namespace CapaPresentacion
 {
+    
+
     public partial class frmreporteacta : Form
     {
+        private BindingSource _bindingSource = new BindingSource();
+        private List<ActaReporte> listaOriginal = new List<ActaReporte>();
+
         public frmreporteacta()
         {
             InitializeComponent();
+
         }
 
         private void btnbuscarreporte_Click(object sender, EventArgs e)
         {
-            try
-            {
-                List<ActaReporte> lista = new CN_Reporte().ReporteActas(
-                     txtfechainicio.Value.ToString("yyyy-MM-dd"),
-                     txtfechafin.Value.ToString("yyyy-MM-dd")
-                );
+            dgvdata.Rows.Clear();
 
-                dgvdata.DataSource = lista;
-            }
-            catch (Exception ex)
+            List<ActaReporte> lista = new CN_Reporte().ReporteActas(
+                txtfechainicio.Value.ToString("yyyy-MM-dd"),
+                txtfechafin.Value.ToString("yyyy-MM-dd")
+            );
+
+            foreach (ActaReporte acta in lista)
             {
-                MessageBox.Show("Error al buscar el reporte: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                dgvdata.Rows.Add(new object[]
+                {
+                    acta.NumeroDocumento,
+                    acta.FechaRegistro,
+                    acta.NombreFarmacia,
+                    acta.CodigoEquipo,
+                    acta.NombreEquipo,
+                    acta.Cantidad,
+                    acta.NumeroSerial,
+                    acta.Caja,
+                    acta.EstadoAutorizacion,
+                    acta.NombreCompleto
+                });
             }
+
+            if (lista.Count == 0)
+                MessageBox.Show("No se encontraron registros en ese rango de fechas.", "Mensaje", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         private void frmreporteacta_Load(object sender, EventArgs e)
         {
+            // 🔥 FIJA el color del texto de las filas (el diseñador NO lo pone)
+            dgvdata.RowsDefaultCellStyle.ForeColor = Color.Black;
+            dgvdata.RowsDefaultCellStyle.BackColor = Color.White;
+
+            // Permisos
+            List<Permiso> listaPermisos = new CN_Permiso().Listar(Inicio.usuarioActual.IdUsuario);
+            btnexportar.Visible = UtilPermisos.TienePermisoAccion(listaPermisos, "submenureporteacta", "btnexportar");
+
             try
             {
-                dgvdata.AutoGenerateColumns = false;
-                dgvdata.Columns.Clear();
-
-                var columnas = new (string Propiedad, string Titulo)[]
-                {
-            ("NumeroDocumento", "N° Documento"),
-            ("FechaRegistro", "Fecha"),
-            ("NombreFarmacia", "Farmacia"),
-            ("CodigoEquipo", "Cod. Equipo"),
-            ("NombreEquipo", "Nombre Equipo"),
-            ("Estado", "Estado"),
-            ("Cantidad", "Cantidad"),
-            ("NumeroSerial", "Serial"),
-            ("Caja", "Caja"),
-            ("EstadoAutorizacion", "Autorización")
-                };
-
-                foreach (var col in columnas)
-                {
-                    dgvdata.Columns.Add(new DataGridViewTextBoxColumn()
-                    {
-                        Name = col.Propiedad,
-                        DataPropertyName = col.Propiedad,
-                        HeaderText = col.Titulo,
-                        AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
-                    });
-                }
-
-                dgvdata.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-
+                // Llenar combo de búsqueda usando las columnas del DGV
                 cbobusqueda.Items.Clear();
-                foreach (var col in columnas)
+
+                foreach (DataGridViewColumn col in dgvdata.Columns)
                 {
-                    cbobusqueda.Items.Add(new OpcionCombo() { Valor = col.Propiedad, Texto = col.Titulo });
+                    cbobusqueda.Items.Add(new OpcionCombo()
+                    {
+                        Valor = col.Name,
+                        Texto = col.HeaderText
+                    });
                 }
 
                 cbobusqueda.DisplayMember = "Texto";
                 cbobusqueda.ValueMember = "Valor";
-                cbobusqueda.SelectedIndex = 0;
+
+                if (cbobusqueda.Items.Count > 0)
+                    cbobusqueda.SelectedIndex = 0;
             }
             catch (Exception ex)
             {
@@ -148,51 +156,112 @@ namespace CapaPresentacion
 
         private void btnbuscar_Click(object sender, EventArgs e)
         {
-            try
-            {
-                string columnaFiltro = ((OpcionCombo)cbobusqueda.SelectedItem).Valor.ToString();
+            string columnaFiltro = ((OpcionCombo)cbobusqueda.SelectedItem).Valor.ToString();
+            string textoFiltro = txtbusqueda.Text.Trim().ToUpper();
 
-                if (!dgvdata.Columns.Contains(columnaFiltro))
-                {
-                    MessageBox.Show($"La columna '{columnaFiltro}' no existe en el DataGridView.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
-                }
-
-                if (dgvdata.Rows.Count > 0)
-                {
-                    foreach (DataGridViewRow row in dgvdata.Rows)
-                    {
-                        if (row.Cells[columnaFiltro].Value != null &&
-                            row.Cells[columnaFiltro].Value.ToString().Trim().ToUpper().Contains(txtbusqueda.Text.Trim().ToUpper()))
-                        {
-                            row.Visible = true;
-                        }
-                        else
-                        {
-                            row.Visible = false;
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
+            foreach (DataGridViewRow row in dgvdata.Rows)
             {
-                MessageBox.Show("Error al filtrar los datos: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                var valorCelda = row.Cells[columnaFiltro].Value?.ToString().Trim().ToUpper() ?? "";
+
+                if (columnaFiltro == "Estado") // comparación exacta para Estado
+                    row.Visible = valorCelda == textoFiltro;
+                else // búsqueda parcial para el resto
+                    row.Visible = valorCelda.Contains(textoFiltro);
             }
         }
 
         private void btnlimpiarbuscador_Click(object sender, EventArgs e)
         {
+            txtbusqueda.Text = "";
+            foreach (DataGridViewRow row in dgvdata.Rows)
+            {
+                row.Visible = true;
+            }
+        }
+
+        private void btndescargar_Click(object sender, EventArgs e)
+        {
             try
             {
-                txtbusqueda.Text = "";
+                if (dgvdata.Rows.Count < 1)
+                {
+                    MessageBox.Show("No hay registros para exportar", "Mensaje",
+                        MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    return;
+                }
+
+                string html = Properties.Resources.PlantillaActas.ToString();
+
+                // Datos del negocio
+                Negocio datos = new CN_Negocio().ObtenerDatos();
+                html = html.Replace("@nombrenegocio", datos.Nombre.ToUpper());
+                html = html.Replace("@docnegocio", datos.RUC);
+                html = html.Replace("@direcnegocio", datos.Direccion);
+
+                // Construcción de filas
+                string filas = "";
+
                 foreach (DataGridViewRow row in dgvdata.Rows)
                 {
-                    row.Visible = true;
+                    if (!row.Visible) continue;
+
+                    filas += "<tr>";
+                    filas += $"<td>{row.Cells["NumeroDocumento"].Value}</td>";
+                    filas += $"<td>{row.Cells["FechaRegistro"].Value}</td>";
+                    filas += $"<td>{row.Cells["NombreFarmacia"].Value}</td>";
+                    filas += $"<td>{row.Cells["CodigoEquipo"].Value}</td>";
+                    filas += $"<td>{row.Cells["NombreEquipo"].Value}</td>";
+                    filas += $"<td>{row.Cells["Cantidad"].Value}</td>";
+                    filas += $"<td>{row.Cells["NumeroSerial"].Value}</td>";
+                    filas += $"<td>{row.Cells["Caja"].Value}</td>";
+                    filas += $"<td>{row.Cells["EstadoAutorizacion"].Value}</td>";
+                    filas += $"<td>{row.Cells["NombreCompleto"].Value}</td>";
+                    filas += "</tr>";
+                }
+
+                html = html.Replace("@filas", filas);
+
+                SaveFileDialog savefile = new SaveFileDialog();
+                savefile.FileName = $"Reporte_Actas_{DateTime.Now:yyyyMMddHHmmss}.pdf";
+                savefile.Filter = "PDF Files|*.pdf";
+
+                if (savefile.ShowDialog() == DialogResult.OK)
+                {
+                    using (FileStream stream = new FileStream(savefile.FileName, FileMode.Create))
+                    {
+                        Document pdfDoc = new Document(PageSize.A4, 25, 25, 90, 25);
+                        PdfWriter writer = PdfWriter.GetInstance(pdfDoc, stream);
+                        pdfDoc.Open();
+
+                        // LOGO ENCIMA DE LA LÍNEA
+                        bool obtenido;
+                        byte[] byteImage = new CN_Negocio().ObtenerLogo(out obtenido);
+
+                        if (obtenido)
+                        {
+                            iTextSharp.text.Image img = iTextSharp.text.Image.GetInstance(byteImage);
+                            img.ScaleToFit(70, 70);
+                            img.SetAbsolutePosition(pdfDoc.Left + 5, pdfDoc.Top - 55); //  aquí ajustás el margen
+                            pdfDoc.Add(img);
+                        }
+
+                        using (StringReader sr = new StringReader(html))
+                        {
+                            XMLWorkerHelper.GetInstance().ParseXHtml(writer, pdfDoc, sr);
+                        }
+
+                        pdfDoc.Close();
+                        stream.Close();
+                    }
+
+                    MessageBox.Show("PDF generado correctamente", "Mensaje",
+                        MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error al limpiar el buscador: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Error al generar el PDF: " + ex.Message, "Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
     }

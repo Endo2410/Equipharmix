@@ -112,7 +112,7 @@
             this.btnentrar.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnentrar.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnentrar.ForeColor = System.Drawing.Color.White;
-            this.btnentrar.Location = new System.Drawing.Point(355, 242);
+            this.btnentrar.Location = new System.Drawing.Point(355, 261);
             this.btnentrar.Name = "btnentrar";
             this.btnentrar.Size = new System.Drawing.Size(173, 57);
             this.btnentrar.TabIndex = 48;

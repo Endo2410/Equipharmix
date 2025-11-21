@@ -30,6 +30,12 @@ namespace CapaPresentacion
 
         private void frmacta_Load(object sender, EventArgs e)
         {
+            // Obtiene los permisos del usuario logueado
+            List<Permiso> listaPermisos = new CN_Permiso().Listar(Inicio.usuarioActual.IdUsuario);
+
+            // Controla visibilidad de los botones según permisos
+            btncrearventa.Visible = UtilPermisos.TienePermisoAccion(listaPermisos, "submenuregistraracta", "btncrearventa");
+
             cbotipodocumento.Items.Add(new OpcionCombo() { Valor = "Word", Texto = "Word" });
             cbotipodocumento.Items.Add(new OpcionCombo() { Valor = "Word", Texto = "Word" });
             cbotipodocumento.DisplayMember = "Texto";
@@ -233,8 +239,8 @@ namespace CapaPresentacion
                 if (index >= 0)
                 {
                     bool respuesta = new CN_Acta().SumarStock(
-                        Convert.ToInt32(dgvdata.Rows[index].Cells["IdEquipo"].Value.ToString()),
-                        Convert.ToInt32(dgvdata.Rows[index].Cells["Cantidad"].Value.ToString()));
+                    Convert.ToInt32(dgvdata.Rows[index].Cells["IdEquipo"].Value.ToString()),
+                    Convert.ToInt32(dgvdata.Rows[index].Cells["Cantidad"].Value.ToString()));
 
 
                     if (respuesta)
@@ -329,15 +335,15 @@ namespace CapaPresentacion
                 {
                     detalle_acta.Rows.Add(new object[]
                     {
-                Convert.ToInt32(row.Cells["IdEquipo"].Value),
-                Convert.ToInt32(row.Cells["Cantidad"].Value),
-                row.Cells["NumeroSerial"].Value?.ToString() ?? "",
-                row.Cells["Caja"].Value?.ToString() ?? ""
+                        Convert.ToInt32(row.Cells["IdEquipo"].Value),
+                        Convert.ToInt32(row.Cells["Cantidad"].Value),
+                        row.Cells["NumeroSerial"].Value?.ToString() ?? "",
+                        row.Cells["Caja"].Value?.ToString() ?? ""
                     });
                 }
 
-                CN_Acta objCN_Acta = new CN_Acta();
-                int idFarmacia = objCN_Acta.ObtenerIdFarmaciaPorCodigo(txtdocumentocliente.Text.Trim());
+                CN_Farmacia objcn_farmacia = new CN_Farmacia();
+                int idFarmacia = objcn_farmacia.ObtenerIdFarmaciaPorCodigo(txtdocumentocliente.Text.Trim());
 
                 if (idFarmacia == 0)
                 {
@@ -345,6 +351,7 @@ namespace CapaPresentacion
                     return;
                 }
 
+                CN_Acta objCN_Acta = new CN_Acta();
                 string codigoFarmacia = txtdocumentocliente.Text.Trim();
                 string numeroDocumento = objCN_Acta.GenerarNumeroDocumento(idFarmacia, codigoFarmacia);
 

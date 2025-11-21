@@ -22,5 +22,10 @@ namespace CapaNegocio
         {
             return objcd_reporte.Registrar(fechainicio, fechafin);
         }
+
+        public List<Auditoria> ObtenerAuditoria(string tabla, string fechainicio, string fechafin)
+        {
+            return objcd_reporte.ObtenerAuditoria(tabla, fechainicio, fechafin);
+        }
     }
 }

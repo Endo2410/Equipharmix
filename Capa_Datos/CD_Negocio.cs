@@ -1,4 +1,5 @@
 ﻿using CapaEntidad;
+using CapaPresentacion.Utilidades;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -11,25 +12,25 @@ namespace CapaDatos
 {
     public class CD_Negocio
     {
-        public Negocio ObtenerDatos() {
-
+        public Negocio ObtenerDatos()
+        {
             Negocio obj = new Negocio();
 
             try
             {
-
-                using (SqlConnection conexion = new SqlConnection(Conexion.cadena)) {
+                using (SqlConnection conexion = new SqlConnection(Conexion.cadena))
+                {
                     conexion.Open();
+                    SqlCommand cmd = new SqlCommand("SP_OBTENER_NEGOCIO", conexion);
+                    cmd.CommandType = CommandType.StoredProcedure;
 
-                    string query = "select IdNegocio, Nombre, RUC, Direccion from NEGOCIO where IdNegocio = 1";
-                    SqlCommand cmd = new SqlCommand(query, conexion);
-                    cmd.CommandType = CommandType.Text;
-
-                    using(SqlDataReader dr =cmd.ExecuteReader()) {
-                        while (dr.Read()) {
+                    using (SqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        while (dr.Read())
+                        {
                             obj = new Negocio()
                             {
-                                IdNegocio = int.Parse(dr["IdNegocio"].ToString()),
+                                IdNegocio = Convert.ToInt32(dr["IdNegocio"]),
                                 Nombre = dr["Nombre"].ToString(),
                                 RUC = dr["RUC"].ToString(),
                                 Direccion = dr["Direccion"].ToString()
@@ -38,14 +39,15 @@ namespace CapaDatos
                     }
                 }
             }
-            catch {
+            catch
+            {
                 obj = new Negocio();
             }
             return obj;
         }
 
-        public bool GuardarDatos(Negocio objeto, out string mensaje) {
-
+        public bool GuardarDatos(Negocio objeto, out string mensaje)
+        {
             mensaje = string.Empty;
             bool respuesta = true;
 
@@ -55,26 +57,26 @@ namespace CapaDatos
                 {
                     conexion.Open();
 
-
-                    StringBuilder query = new StringBuilder();
-                    query.AppendLine("update NEGOCIO set Nombre = @nombre,");
-                    query.AppendLine("RUC = @ruc,");
-                    query.AppendLine("Direccion = @direccion");
-                    query.AppendLine("where IdNegocio = 1;");
-
-                    SqlCommand cmd = new SqlCommand(query.ToString(), conexion);
-                    cmd.Parameters.AddWithValue("@nombre", objeto.Nombre);
-                    cmd.Parameters.AddWithValue("@ruc", objeto.RUC);
-                    cmd.Parameters.AddWithValue("@direccion", objeto.Direccion);
-                    cmd.CommandType = CommandType.Text;
-
-                    if (cmd.ExecuteNonQuery() < 1) {
-                        mensaje = "No se pudo guardar los datos";
-                        respuesta = false;
+                    // Guardar usuario logueado en SESSION_CONTEXT
+                    using (SqlCommand cmdt = new SqlCommand("EXEC sp_set_session_context @key, @value", conexion))
+                    {
+                        cmdt.Parameters.AddWithValue("@key", "Usuario");
+                        cmdt.Parameters.AddWithValue("@value", UsuarioSesion.NombreCompleto);
+                        cmdt.ExecuteNonQuery();
                     }
+
+
+                    SqlCommand cmd = new SqlCommand("SP_GUARDAR_NEGOCIO", conexion);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@Nombre", objeto.Nombre);
+                    cmd.Parameters.AddWithValue("@RUC", objeto.RUC);
+                    cmd.Parameters.AddWithValue("@Direccion", objeto.Direccion);
+
+                    cmd.ExecuteNonQuery();      
+                    respuesta = true;
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 mensaje = ex.Message;
                 respuesta = false;
@@ -83,28 +85,31 @@ namespace CapaDatos
             return respuesta;
         }
 
-        public byte[] ObtenerLogo(out bool obtenido) {
+
+        public byte[] ObtenerLogo(out bool obtenido)
+        {
             obtenido = true;
             byte[] LogoBytes = new byte[0];
+
             try
             {
                 using (SqlConnection conexion = new SqlConnection(Conexion.cadena))
                 {
                     conexion.Open();
-                    string query = "select Logo from NEGOCIO where IdNegocio = 1";
-                    SqlCommand cmd = new SqlCommand(query, conexion);
-                    cmd.CommandType = CommandType.Text;
+                    SqlCommand cmd = new SqlCommand("SP_OBTENER_LOGO_NEGOCIO", conexion);
+                    cmd.CommandType = CommandType.StoredProcedure;
 
                     using (SqlDataReader dr = cmd.ExecuteReader())
                     {
                         while (dr.Read())
                         {
-                            LogoBytes = (byte[])dr["Logo"];
+                            if (dr["Logo"] != DBNull.Value)
+                                LogoBytes = (byte[])dr["Logo"];
                         }
                     }
                 }
             }
-            catch (Exception ex)
+            catch
             {
                 obtenido = false;
                 LogoBytes = new byte[0];
@@ -113,32 +118,32 @@ namespace CapaDatos
             return LogoBytes;
         }
 
-        public bool ActualizarLogo(byte[] image, out string mensaje) {
+        public bool ActualizarLogo(byte[] image, out string mensaje)
+        {
             mensaje = string.Empty;
             bool respuesta = true;
 
             try
             {
-
                 using (SqlConnection conexion = new SqlConnection(Conexion.cadena))
                 {
                     conexion.Open();
 
-
-                    StringBuilder query = new StringBuilder();
-                    query.AppendLine("update NEGOCIO set Logo = @imagen");
-                    query.AppendLine("where IdNegocio = 1;");
-
-                    SqlCommand cmd = new SqlCommand(query.ToString(), conexion);
-                    cmd.Parameters.AddWithValue("@imagen", image);
-                    cmd.CommandType = CommandType.Text;
-
-                    if (cmd.ExecuteNonQuery() < 1)
+                    // Guardar usuario logueado en SESSION_CONTEXT
+                    using (SqlCommand cmdt = new SqlCommand("EXEC sp_set_session_context @key, @value", conexion))
                     {
-                        mensaje = "No se pudo actualizar el logo";
-                        respuesta = false;
+                        cmdt.Parameters.AddWithValue("@key", "Usuario");
+                        cmdt.Parameters.AddWithValue("@value", UsuarioSesion.NombreCompleto);
+                        cmdt.ExecuteNonQuery();
                     }
 
+
+                    SqlCommand cmd = new SqlCommand("SP_ACTUALIZAR_LOGO_NEGOCIO", conexion);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@Logo", image);
+
+                    cmd.ExecuteNonQuery();   
+                    respuesta = true;
                 }
             }
             catch (Exception ex)
@@ -149,5 +154,6 @@ namespace CapaDatos
 
             return respuesta;
         }
+
     }
 }

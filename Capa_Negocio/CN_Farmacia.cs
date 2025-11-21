@@ -19,6 +19,11 @@ namespace CapaNegocio
             return objcd_Farmacia.Listar();
         }
 
+        public int ObtenerIdFarmaciaPorCodigo(string codigo)
+        {
+            return objcd_Farmacia.ObtenerIdFarmaciaPorCodigo(codigo);
+        }
+
         public int Registrar(Farmacia obj, out string Mensaje)
         {
             Mensaje = string.Empty;
@@ -69,6 +74,11 @@ namespace CapaNegocio
             {
                 return objcd_Farmacia.Editar(obj, out Mensaje);
             }
+        }
+
+        public List<Farmacia> ReporteFarmacia(string fechainicio, string fechafin)
+        {
+            return objcd_Farmacia.ReporteFarmacia(fechainicio, fechafin);
         }
     }
 }

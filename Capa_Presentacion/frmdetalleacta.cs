@@ -1,6 +1,8 @@
 ﻿using CapaEntidad;
 using CapaNegocio;
+using CapaPresentacion.Utilidades;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
 
@@ -19,6 +21,11 @@ namespace CapaPresentacion
 
         private void frmdetalleacta_Load(object sender, EventArgs e)
         {
+            // Obtiene los permisos del usuario logueado
+            List<Permiso> listaPermisos = new CN_Permiso().Listar(Inicio.usuarioActual.IdUsuario);
+
+            // Controla visibilidad de los botones según permisos
+            btndescargar.Visible = UtilPermisos.TienePermisoAccion(listaPermisos, "submenuverdetalleacta", "btndescargar");
 
             txtbusqueda.Select();
         }

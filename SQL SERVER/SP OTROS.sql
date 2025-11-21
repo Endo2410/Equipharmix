@@ -16,7 +16,7 @@ GO
  * SP_REGISTRARUSUARIO
  * Sirve para registrar un nuevo usuario validando que no exista otro con el mismo documento.
  */
-CREATE PROCEDURE SP_REGISTRARUSUARIO (
+alter PROCEDURE SP_REGISTRAR_USUARIO (
     @Documento         VARCHAR(50),
     @NombreCompleto    VARCHAR(100),
     @NombreUsuario     VARCHAR(50),
@@ -62,7 +62,8 @@ GO
  * SP_EDITARUSUARIO
  * Sirve para modificar datos de un usuario existente validando que no exista otro con el mismo documento.
  */
-CREATE PROCEDURE SP_EDITARUSUARIO (
+ALTER PROCEDURE SP_EDITAR_USUARIO
+(
     @IdUsuario INT,
     @Documento VARCHAR(50),
     @NombreCompleto VARCHAR(100),
@@ -77,20 +78,14 @@ CREATE PROCEDURE SP_EDITARUSUARIO (
 AS
 BEGIN
     SET NOCOUNT ON;
-
     SET @Respuesta = 0;
     SET @Mensaje = '';
 
     BEGIN TRY
-        IF NOT EXISTS (
-            SELECT 1 FROM USUARIO 
-            WHERE UPPER(Documento) = UPPER(@Documento) 
-              AND IdUsuario != @IdUsuario
-        )
+        IF NOT EXISTS (SELECT 1 FROM USUARIO WHERE UPPER(Documento) = UPPER(@Documento) AND IdUsuario != @IdUsuario)
         BEGIN
             UPDATE USUARIO
-            SET
-                Documento = @Documento,
+            SET Documento = @Documento,
                 NombreCompleto = @NombreCompleto,
                 NombreUsuario = @NombreUsuario,
                 Correo = @Correo,
@@ -112,6 +107,7 @@ BEGIN
 END
 GO
 
+
 /****************** PROCEDIMIENTOS ALMACENADOS PARA MARCAS ******************/
 /*---------------------------------------------------------------------------------*/
 
@@ -119,7 +115,7 @@ GO
  * SP_RegistrarMarca
  * Sirve para registrar una nueva marca validando que no exista otra con la misma descripción (insensible a mayúsculas).
  */
-CREATE PROCEDURE SP_RegistrarMarca (
+CREATE PROCEDURE SP_REGISTRAR_MARCA (
     @Descripcion VARCHAR(50),
     @Estado BIT,
     @Resultado INT OUTPUT,
@@ -156,7 +152,7 @@ GO
  * sp_EditarMarca
  * Sirve para modificar una marca existente validando que no exista otra con la misma descripción.
  */
-CREATE PROCEDURE sp_EditarMarca (
+CREATE PROCEDURE SP_EDITAR_MARCA (
     @IdMarca INT,
     @Descripcion VARCHAR(50),
     @Estado BIT,
@@ -195,6 +191,89 @@ BEGIN
 END
 GO
 
+/****************** PROCEDIMIENTOS ALMACENADOS PARA ROLES ******************/
+/*---------------------------------------------------------------------------------*/
+
+/*
+ * SP_RegistrarRoles
+ * Sirve para registrar una nueva marca validando que no exista otra con la misma descripción (insensible a mayúsculas).
+ */
+alter PROCEDURE SP_REGISTRAR_ROLES (
+    @Descripcion VARCHAR(50),
+    @Estado BIT,
+    @Resultado INT OUTPUT,
+    @Mensaje VARCHAR(500) OUTPUT
+)
+AS
+BEGIN
+    SET NOCOUNT ON;
+    SET @Resultado = 0;
+    SET @Mensaje = '';
+
+    BEGIN TRY
+        IF NOT EXISTS (
+            SELECT 1 FROM ROL WHERE UPPER(RTRIM(LTRIM(Descripcion))) = UPPER(RTRIM(LTRIM(@Descripcion)))
+        )
+        BEGIN
+            INSERT INTO ROL (Descripcion, Estado)
+            VALUES (@Descripcion, @Estado);
+
+            SET @Resultado = SCOPE_IDENTITY();
+        END
+        ELSE
+        BEGIN
+            SET @Mensaje = 'No se puede repetir la descripción de un rol.';
+        END
+    END TRY
+    BEGIN CATCH
+        SET @Mensaje = ERROR_MESSAGE();
+    END CATCH
+END
+GO
+
+/*
+ * sp_EditarMarca
+ * Sirve para modificar una marca existente validando que no exista otra con la misma descripción.
+ */
+alter PROCEDURE SP_EDITAR_ROL (
+    @IdRol INT,
+    @Descripcion VARCHAR(50),
+    @Estado BIT,
+    @Resultado BIT OUTPUT,
+    @Mensaje VARCHAR(500) OUTPUT
+)
+AS
+BEGIN
+    SET NOCOUNT ON;
+    SET @Resultado = 0;
+    SET @Mensaje = '';
+
+    BEGIN TRY
+        IF NOT EXISTS (
+            SELECT 1 FROM ROL 
+            WHERE UPPER(RTRIM(LTRIM(Descripcion))) = UPPER(RTRIM(LTRIM(@Descripcion)))
+              AND IdRol != @IdRol
+        )
+        BEGIN
+            UPDATE ROL
+            SET 
+                Descripcion = @Descripcion,
+                Estado = @Estado
+            WHERE IdRol = @IdRol;
+
+            SET @Resultado = 1;
+        END
+        ELSE
+        BEGIN
+            SET @Mensaje = 'No se puede repetir la descripción de un rol.';
+        END
+    END TRY
+    BEGIN CATCH
+        SET @Mensaje = ERROR_MESSAGE();
+    END CATCH
+END
+GO
+
 
 /****************** PROCEDIMIENTOS ALMACENADOS PARA EQUIPOS ******************/
 /*----------------------------------------------------------------------------------*/
@@ -203,7 +282,7 @@ GO
  * sp_RegistrarEquipo
  * Sirve para registrar un nuevo equipo validando que no exista otro con el mismo código.
  */
-CREATE PROCEDURE sp_RegistrarEquipo (
+CREATE PROCEDURE SP_REGISTRAR_EQUIPO (
     @Codigo VARCHAR(20),
     @Nombre VARCHAR(30),
     @Descripcion VARCHAR(30),
@@ -248,14 +327,14 @@ GO
  * sp_ModificarEquipo
  * Sirve para modificar un equipo existente validando que no exista otro con el mismo código.
  */
-CREATE PROCEDURE sp_ModificarEquipo (
+alter PROCEDURE SP_MODIFICAR_EQUIPO (
     @IdEquipo INT,
     @Codigo VARCHAR(20),
     @Nombre VARCHAR(30),
     @Descripcion VARCHAR(30),
     @IdMarca INT,
     @IdEstado INT,
-    @Resultado BIT OUTPUT,
+    @Resultado INT OUTPUT,
     @Mensaje VARCHAR(500) OUTPUT
 )
 AS
@@ -265,34 +344,49 @@ BEGIN
     SET @Mensaje = '';
 
     BEGIN TRY
-        IF NOT EXISTS (
-            SELECT 1 FROM EQUIPO 
+        -- Validar que la marca exista
+        IF NOT EXISTS (SELECT 1 FROM MARCA WHERE IdMarca = @IdMarca)
+        BEGIN
+            SET @Mensaje = 'La marca seleccionada no existe.';
+            RETURN;
+        END
+
+        -- Validar que el estado exista
+        IF NOT EXISTS (SELECT 1 FROM ESTADO WHERE IdEstado = @IdEstado)
+        BEGIN
+            SET @Mensaje = 'El estado seleccionado no existe.';
+            RETURN;
+        END
+
+        -- Validar código repetido
+        IF EXISTS (
+            SELECT 1 FROM EQUIPO
             WHERE UPPER(RTRIM(LTRIM(Codigo))) = UPPER(RTRIM(LTRIM(@Codigo)))
               AND IdEquipo != @IdEquipo
         )
         BEGIN
-            UPDATE EQUIPO
-            SET 
-                Codigo = @Codigo,
-                Nombre = @Nombre,
-                Descripcion = @Descripcion,
-                IdMarca = @IdMarca,
-                IdEstado = @IdEstado
-            WHERE IdEquipo = @IdEquipo;
-
-            SET @Resultado = 1;
-        END
-        ELSE
-        BEGIN
             SET @Mensaje = 'Ya existe un equipo con el mismo código.';
+            RETURN;
         END
+
+        -- Actualizar equipo
+        UPDATE EQUIPO
+        SET 
+            Codigo = @Codigo,
+            Nombre = @Nombre,
+            Descripcion = @Descripcion,
+            IdMarca = @IdMarca,
+            IdEstado = @IdEstado
+        WHERE IdEquipo = @IdEquipo;
+
+        SET @Resultado = 1; -- Éxito
     END TRY
     BEGIN CATCH
         SET @Mensaje = ERROR_MESSAGE();
+        SET @Resultado = 0;
     END CATCH
 END
 GO
-
 
 /****************** PROCEDIMIENTOS ALMACENADOS PARA REPORTES ******************/
 /*----------------------------------------------------------------------------------*/
@@ -301,7 +395,7 @@ GO
  * sp_ReporteRegistrar
  * Sirve para obtener un reporte de los registros de entradas filtrados por fecha.
  */
-CREATE PROCEDURE sp_ReporteRegistrar(
+CREATE PROCEDURE SP_REPORTE_REGISTRAR(
  @fechainicio VARCHAR(10),
  @fechafin VARCHAR(10)
  )
@@ -330,7 +424,7 @@ GO
  * usp_Obtenerreporteacta
  * Sirve para obtener un reporte de actas autorizadas entre fechas.
  */
-CREATE PROCEDURE usp_Obtenerreporteacta
+alter PROCEDURE SP_OBTENER_REPORTE_ACTA
 (
     @FechaInicio DATE,
     @FechaFin DATE
@@ -343,16 +437,16 @@ BEGIN
         F.Nombre AS NombreFarmacia,
         E.Codigo AS CodigoEquipo,
         E.Nombre AS NombreEquipo,
-        ES.Descripcion AS Estado,
         DA.Cantidad,
         DA.NumeroSerial,
         DA.Caja,
-        A.EstadoAutorizacion
+        A.EstadoAutorizacion,
+	    U.NombreCompleto AS NombreCompleto
     FROM ACTA A
     INNER JOIN FARMACIA F ON A.IdFarmacia = F.IdFarmacia
     INNER JOIN DETALLE_ACTA DA ON A.IdActa = DA.IdActa
     INNER JOIN EQUIPO E ON E.IdEquipo = DA.IdEquipo
-    INNER JOIN ESTADO ES ON ES.IdEstado = E.IdEstado
+    INNER JOIN USUARIO U ON U.IdUsuario = DA.IdUsuarioAutorizo
     WHERE A.EstadoAutorizacion = 'AUTORIZADO'
       AND A.FechaRegistro >= @FechaInicio 
       AND A.FechaRegistro < DATEADD(DAY, 1, @FechaFin)
@@ -367,11 +461,12 @@ GO
  * sp_RegistrarFarmacia
  * Sirve para registrar una nueva farmacia validando que no exista otra con el mismo código.
  */
-CREATE PROCEDURE sp_RegistrarFarmacia
+CREATE PROCEDURE SP_REGISTRAR_FARMACIA
 (
     @Codigo VARCHAR(50),
     @Nombre VARCHAR(50),
     @Telefono VARCHAR(50),
+    @Correo VARCHAR(100),
     @Estado BIT,
     @Resultado INT OUTPUT,
     @Mensaje VARCHAR(500) OUTPUT
@@ -390,8 +485,8 @@ BEGIN
             RETURN;
         END
 
-        INSERT INTO FARMACIA (Codigo, Nombre, Telefono, Estado)
-        VALUES (@Codigo, @Nombre, @Telefono, @Estado);
+        INSERT INTO FARMACIA (Codigo, Nombre, Telefono, Correo, Estado)
+        VALUES (@Codigo, @Nombre, @Telefono, @Correo, @Estado);
 
         SET @Resultado = SCOPE_IDENTITY();
 
@@ -407,12 +502,13 @@ GO
  * sp_ModificarFarmacia
  * Sirve para modificar una farmacia existente validando que no exista otra con el mismo código.
  */
-CREATE PROCEDURE sp_ModificarFarmacia
+ CREATE PROCEDURE SP_MODIFICAR_FARMACIA
 (
     @IdFarmacia INT,
     @Codigo VARCHAR(50),
     @Nombre VARCHAR(50),
     @Telefono VARCHAR(50),
+    @Correo VARCHAR(100),
     @Estado BIT,
     @Resultado BIT OUTPUT,
     @Mensaje VARCHAR(500) OUTPUT
@@ -436,6 +532,7 @@ BEGIN
         SET Codigo = @Codigo,
             Nombre = @Nombre,
             Telefono = @Telefono,
+            Correo = @Correo,
             Estado = @Estado
         WHERE IdFarmacia = @IdFarmacia;
 
@@ -447,6 +544,7 @@ BEGIN
 END
 GO
 
+
 /****************** PROCEDIMIENTOS ALMACENADOS PARA REGISTRAR ENTRADA ******************/
 /*----------------------------------------------------------------------------------*/
 
@@ -454,7 +552,7 @@ GO
  * sp_Registrar
  * Sirve para registrar una entrada de equipos con detalle y actualizar stock en EQUIPO.
  */
-CREATE PROCEDURE sp_Registrar
+CREATE PROCEDURE SP_REGISTRAR
 (
     @IdUsuario INT,
     @TipoDocumento VARCHAR(500),

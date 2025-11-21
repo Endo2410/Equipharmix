@@ -53,6 +53,7 @@
             this.Nombre = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Marca = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Cantidad = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.btndescargar = new FontAwesome.Sharp.IconButton();
             ((System.ComponentModel.ISupportInitialize)(this.dgvdata)).BeginInit();
             this.SuspendLayout();
             // 
@@ -87,7 +88,7 @@
             this.btnbuscar.IconColor = System.Drawing.Color.Black;
             this.btnbuscar.IconFont = FontAwesome.Sharp.IconFont.Auto;
             this.btnbuscar.IconSize = 16;
-            this.btnbuscar.Location = new System.Drawing.Point(765, 114);
+            this.btnbuscar.Location = new System.Drawing.Point(931, 115);
             this.btnbuscar.Name = "btnbuscar";
             this.btnbuscar.Size = new System.Drawing.Size(42, 23);
             this.btnbuscar.TabIndex = 238;
@@ -105,7 +106,7 @@
             this.btnlimpiarbuscador.IconColor = System.Drawing.Color.Black;
             this.btnlimpiarbuscador.IconFont = FontAwesome.Sharp.IconFont.Auto;
             this.btnlimpiarbuscador.IconSize = 18;
-            this.btnlimpiarbuscador.Location = new System.Drawing.Point(813, 114);
+            this.btnlimpiarbuscador.Location = new System.Drawing.Point(979, 115);
             this.btnlimpiarbuscador.Name = "btnlimpiarbuscador";
             this.btnlimpiarbuscador.Size = new System.Drawing.Size(42, 23);
             this.btnlimpiarbuscador.TabIndex = 239;
@@ -115,7 +116,7 @@
             // 
             // txtbusqueda
             // 
-            this.txtbusqueda.Location = new System.Drawing.Point(605, 116);
+            this.txtbusqueda.Location = new System.Drawing.Point(771, 117);
             this.txtbusqueda.Name = "txtbusqueda";
             this.txtbusqueda.Size = new System.Drawing.Size(152, 20);
             this.txtbusqueda.TabIndex = 237;
@@ -124,7 +125,7 @@
             // 
             this.label11.AutoSize = true;
             this.label11.BackColor = System.Drawing.Color.White;
-            this.label11.Location = new System.Drawing.Point(416, 119);
+            this.label11.Location = new System.Drawing.Point(582, 120);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(61, 13);
             this.label11.TabIndex = 235;
@@ -134,7 +135,7 @@
             // 
             this.cbobusqueda.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbobusqueda.FormattingEnabled = true;
-            this.cbobusqueda.Location = new System.Drawing.Point(483, 115);
+            this.cbobusqueda.Location = new System.Drawing.Point(649, 116);
             this.cbobusqueda.Name = "cbobusqueda";
             this.cbobusqueda.Size = new System.Drawing.Size(116, 21);
             this.cbobusqueda.TabIndex = 236;
@@ -147,7 +148,7 @@
             this.label1.Location = new System.Drawing.Point(11, 100);
             this.label1.Name = "label1";
             this.label1.Padding = new System.Windows.Forms.Padding(6, 0, 0, 0);
-            this.label1.Size = new System.Drawing.Size(881, 392);
+            this.label1.Size = new System.Drawing.Size(1034, 392);
             this.label1.TabIndex = 233;
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
@@ -227,7 +228,7 @@
             this.label10.Location = new System.Drawing.Point(11, 9);
             this.label10.Name = "label10";
             this.label10.Padding = new System.Windows.Forms.Padding(6, 0, 0, 0);
-            this.label10.Size = new System.Drawing.Size(881, 81);
+            this.label10.Size = new System.Drawing.Size(1034, 81);
             this.label10.TabIndex = 224;
             this.label10.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
@@ -262,7 +263,7 @@
             dataGridViewCellStyle2.SelectionForeColor = System.Drawing.Color.Black;
             this.dgvdata.RowsDefaultCellStyle = dataGridViewCellStyle2;
             this.dgvdata.RowTemplate.Height = 28;
-            this.dgvdata.Size = new System.Drawing.Size(855, 329);
+            this.dgvdata.Size = new System.Drawing.Size(997, 329);
             this.dgvdata.TabIndex = 234;
             // 
             // FechaRegistro
@@ -270,30 +271,35 @@
             this.FechaRegistro.HeaderText = "Fecha Registro";
             this.FechaRegistro.Name = "FechaRegistro";
             this.FechaRegistro.ReadOnly = true;
+            this.FechaRegistro.Width = 120;
             // 
             // TipoDocumento
             // 
             this.TipoDocumento.HeaderText = "Tipo Documento";
             this.TipoDocumento.Name = "TipoDocumento";
             this.TipoDocumento.ReadOnly = true;
+            this.TipoDocumento.Width = 130;
             // 
             // NumeroDocumento
             // 
-            this.NumeroDocumento.HeaderText = "Numero Documento";
+            this.NumeroDocumento.HeaderText = "N° Documento";
             this.NumeroDocumento.Name = "NumeroDocumento";
             this.NumeroDocumento.ReadOnly = true;
+            this.NumeroDocumento.Width = 120;
             // 
             // UsuarioRegistro
             // 
             this.UsuarioRegistro.HeaderText = "Usuario Registro";
             this.UsuarioRegistro.Name = "UsuarioRegistro";
             this.UsuarioRegistro.ReadOnly = true;
+            this.UsuarioRegistro.Width = 130;
             // 
             // Codigo
             // 
-            this.Codigo.HeaderText = "Codigo Equipo";
+            this.Codigo.HeaderText = "Cod. Equipo";
             this.Codigo.Name = "Codigo";
             this.Codigo.ReadOnly = true;
+            this.Codigo.Width = 120;
             // 
             // Nombre
             // 
@@ -313,12 +319,31 @@
             this.Cantidad.Name = "Cantidad";
             this.Cantidad.ReadOnly = true;
             // 
+            // btndescargar
+            // 
+            this.btndescargar.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btndescargar.IconChar = FontAwesome.Sharp.IconChar.FilePdf;
+            this.btndescargar.IconColor = System.Drawing.Color.Black;
+            this.btndescargar.IconFont = FontAwesome.Sharp.IconFont.Auto;
+            this.btndescargar.IconSize = 17;
+            this.btndescargar.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.btndescargar.Location = new System.Drawing.Point(147, 115);
+            this.btndescargar.Name = "btndescargar";
+            this.btndescargar.Size = new System.Drawing.Size(134, 21);
+            this.btndescargar.TabIndex = 275;
+            this.btndescargar.Text = "Descargar en PDF";
+            this.btndescargar.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.btndescargar.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+            this.btndescargar.UseVisualStyleBackColor = true;
+            this.btndescargar.Click += new System.EventHandler(this.btndescargar_Click);
+            // 
             // frmreporteregistrar
             // 
             this.AcceptButton = this.btnbuscarresultado;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(932, 501);
+            this.ClientSize = new System.Drawing.Size(1075, 501);
+            this.Controls.Add(this.btndescargar);
             this.Controls.Add(this.dgvdata);
             this.Controls.Add(this.btnexportar);
             this.Controls.Add(this.btnbuscar);
@@ -368,5 +393,6 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn Nombre;
         private System.Windows.Forms.DataGridViewTextBoxColumn Marca;
         private System.Windows.Forms.DataGridViewTextBoxColumn Cantidad;
+        private FontAwesome.Sharp.IconButton btndescargar;
     }
 }

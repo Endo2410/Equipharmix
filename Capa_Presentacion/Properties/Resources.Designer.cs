@@ -174,6 +174,68 @@ namespace CapaPresentacion.Properties {
         ///   Busca una cadena traducida similar a &lt;!DOCTYPE html&gt;
         ///&lt;html&gt;
         ///&lt;head&gt;
+        ///    &lt;style&gt;
+        ///        table.border {
+        ///            border-collapse: collapse;
+        ///            width: 100%;
+        ///        }
+        ///
+        ///        table.border th {
+        ///            border: 1px solid black;
+        ///            padding: 5px;
+        ///            text-align: center;
+        ///            background-color: #CACACA;
+        ///            font-size: 12px;
+        ///        }
+        ///
+        ///        table.border td {
+        ///            border: 1px solid black;
+        ///            padding: 5px;
+        ///            text-align: center;
+        ///            font-size: 10px;
+        /// [resto de la cadena truncado]&quot;;.
+        /// </summary>
+        internal static string PlantillaActas {
+            get {
+                return ResourceManager.GetString("PlantillaActas", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a &lt;!DOCTYPE html&gt;
+        ///&lt;html&gt;
+        ///&lt;head&gt;
+        ///    &lt;style&gt;
+        ///        table.border {
+        ///            border-collapse: collapse;
+        ///            width: 100%;
+        ///        }
+        ///
+        ///        table.border th {
+        ///            border: 1px solid black;
+        ///            padding: 5px;
+        ///            text-align: center;
+        ///            background-color: #CACACA;
+        ///            font-size: 12px;
+        ///        }
+        ///
+        ///        table.border td {
+        ///            border: 1px solid black;
+        ///            padding: 5px;
+        ///            text-align: center;
+        ///            font-size: 10px;
+        /// [resto de la cadena truncado]&quot;;.
+        /// </summary>
+        internal static string PlantillaAuditoria {
+            get {
+                return ResourceManager.GetString("PlantillaAuditoria", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a &lt;!DOCTYPE html&gt;
+        ///&lt;html&gt;
+        ///&lt;head&gt;
         ///    &lt;!--sistema creado por el canal yt codigo estudiante--&gt;
         ///    &lt;title&gt;Web Page Design&lt;/title&gt;
         ///    &lt;style&gt;
@@ -200,12 +262,68 @@ namespace CapaPresentacion.Properties {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a &lt;!DOCTYPE html&gt;
+        ///&lt;html&gt;
+        ///&lt;head&gt;
+        ///    &lt;style&gt;
+        ///        table.border {
+        ///            border-collapse: collapse;
+        ///            width: 100%;
+        ///        }
+        ///
+        ///            table.border th {
+        ///                border: 1px solid black;
+        ///                padding: 5px;
+        ///                text-align: center;
+        ///                background-color: #CACACA;
+        ///                font-size: 12px; /* Tamaño encabezado */
+        ///                font-weight: bold;
+        ///            }
+        ///
+        ///            table.border td {
+        ///                border: 1px solid bl [resto de la cadena truncado]&quot;;.
+        /// </summary>
+        internal static string PlantillaFarmacia {
+            get {
+                return ResourceManager.GetString("PlantillaFarmacia", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca un recurso adaptado de tipo System.Byte[].
         /// </summary>
         internal static byte[] PlantillaProducto {
             get {
                 object obj = ResourceManager.GetObject("PlantillaProducto", resourceCulture);
                 return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a &lt;!DOCTYPE html&gt;
+        ///&lt;html&gt;
+        ///&lt;head&gt;
+        ///    &lt;style&gt;
+        ///        table.border {
+        ///            border-collapse: collapse;
+        ///            width: 100%;
+        ///        }
+        ///
+        ///            table.border th {
+        ///                border: 1px solid black;
+        ///                padding: 5px;
+        ///                text-align: center;
+        ///                background-color: #CACACA;
+        ///                font-size: 12px; /* Tamaño encabezado */
+        ///                font-weight: bold;
+        ///            }
+        ///
+        ///            table.border td {
+        ///                border: 1px solid bl [resto de la cadena truncado]&quot;;.
+        /// </summary>
+        internal static string PlantillaRegistrar {
+            get {
+                return ResourceManager.GetString("PlantillaRegistrar", resourceCulture);
             }
         }
         

@@ -43,14 +43,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CD_Accion.cs" />
     <Compile Include="CD_Estado.cs" />
     <Compile Include="CD_Marca.cs" />
     <Compile Include="CD_Farmacia.cs" />
+    <Compile Include="CD_Modulo.cs" />
+    <Compile Include="CD_Prestamo.cs" />
     <Compile Include="CD_Registrar.cs" />
     <Compile Include="CD_Negocio.cs" />
     <Compile Include="CD_Permiso.cs" />
     <Compile Include="CD_Equipo.cs" />
     <Compile Include="CD_Reporte.cs" />
+    <Compile Include="CD_SubMenu.cs" />
     <Compile Include="CD_Usuario.cs" />
     <Compile Include="CD_Rol.cs" />
     <Compile Include="CD_Acta.cs" />

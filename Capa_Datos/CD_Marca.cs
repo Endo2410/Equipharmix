@@ -1,4 +1,5 @@
 ﻿using CapaEntidad;
+using CapaPresentacion.Utilidades;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -18,14 +19,10 @@ namespace CapaDatos
 
             using (SqlConnection oconexion = new SqlConnection(Conexion.cadena))
             {
-
                 try
                 {
-
-                    StringBuilder query = new StringBuilder();
-                    query.AppendLine("select IdMarca,Descripcion,Estado from Marca");
-                    SqlCommand cmd = new SqlCommand(query.ToString(), oconexion);
-                    cmd.CommandType = CommandType.Text;
+                    SqlCommand cmd = new SqlCommand("SP_LISTAR_MARCA", oconexion);
+                    cmd.CommandType = CommandType.StoredProcedure;
 
                     oconexion.Open();
 
@@ -33,7 +30,6 @@ namespace CapaDatos
                     {
                         while (dr.Read())
                         {
-
                             lista.Add(new Marca()
                             {
                                 IdMarca = Convert.ToInt32(dr["IdMarca"]),
@@ -43,15 +39,13 @@ namespace CapaDatos
                         }
                     }
                 }
-                catch (Exception ex)
+                catch
                 {
-
                     lista = new List<Marca>();
                 }
             }
 
             return lista;
-
         }
 
 
@@ -66,15 +60,23 @@ namespace CapaDatos
 
                 using (SqlConnection oconexion = new SqlConnection(Conexion.cadena))
                 {
+                    oconexion.Open();
 
-                    SqlCommand cmd = new SqlCommand("SP_RegistrarMarca", oconexion);
+                    // Guardar usuario logueado en SESSION_CONTEXT
+                    using (SqlCommand cmdt = new SqlCommand("EXEC sp_set_session_context @key, @value", oconexion))
+                    {
+                        cmdt.Parameters.AddWithValue("@key", "Usuario");
+                        cmdt.Parameters.AddWithValue("@value", UsuarioSesion.NombreCompleto);
+                        cmdt.ExecuteNonQuery();
+                    }
+
+
+                    SqlCommand cmd = new SqlCommand("SP_REGISTRAR_MARCA", oconexion);
                     cmd.Parameters.AddWithValue("Descripcion", obj.Descripcion);
                     cmd.Parameters.AddWithValue("Estado", obj.Estado);
                     cmd.Parameters.Add("Resultado", SqlDbType.Int).Direction = ParameterDirection.Output;
                     cmd.Parameters.Add("Mensaje", SqlDbType.VarChar, 500).Direction = ParameterDirection.Output;
                     cmd.CommandType = CommandType.StoredProcedure;
-
-                    oconexion.Open();
 
                     cmd.ExecuteNonQuery();
 
@@ -105,16 +107,24 @@ namespace CapaDatos
 
                 using (SqlConnection oconexion = new SqlConnection(Conexion.cadena))
                 {
+                    oconexion.Open();
 
-                    SqlCommand cmd = new SqlCommand("sp_EditarMarca", oconexion);
+                    // Guardar usuario logueado en SESSION_CONTEXT
+                    using (SqlCommand cmdt = new SqlCommand("EXEC sp_set_session_context @key, @value", oconexion))
+                    {
+                        cmdt.Parameters.AddWithValue("@key", "Usuario");
+                        cmdt.Parameters.AddWithValue("@value", UsuarioSesion.NombreCompleto);
+                        cmdt.ExecuteNonQuery();
+                    }
+
+
+                    SqlCommand cmd = new SqlCommand("SP_EDITAR_MARCA", oconexion);
                     cmd.Parameters.AddWithValue("IdMarca", obj.IdMarca);
                     cmd.Parameters.AddWithValue("Descripcion", obj.Descripcion);
                     cmd.Parameters.AddWithValue("Estado", obj.Estado);
                     cmd.Parameters.Add("Resultado", SqlDbType.Int).Direction = ParameterDirection.Output;
                     cmd.Parameters.Add("Mensaje", SqlDbType.VarChar, 500).Direction = ParameterDirection.Output;
                     cmd.CommandType = CommandType.StoredProcedure;
-
-                    oconexion.Open();
 
                     cmd.ExecuteNonQuery();
 

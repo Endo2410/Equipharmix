@@ -22,6 +22,14 @@ namespace CapaPresentacion
 
         private void frmmarca_Load(object sender, EventArgs e)
         {
+            // Obtiene los permisos del usuario logueado
+            List<Permiso> listaPermisos = new CN_Permiso().Listar(Inicio.usuarioActual.IdUsuario);
+
+            // Controla visibilidad de los botones según permisos
+            btnguardar.Visible = UtilPermisos.TienePermisoAccion(listaPermisos, "submenumarca", "btnguardar");
+            btnlimpiar.Visible = UtilPermisos.TienePermisoAccion(listaPermisos, "submenumarca", "btnlimpiar");
+
+
             txtdescripcion.MaxLength = 30;
 
             cboestado.Items.Add(new OpcionCombo() { Valor = 1, Texto = "Activo" });

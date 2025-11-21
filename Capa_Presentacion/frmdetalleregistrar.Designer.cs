@@ -69,6 +69,7 @@
             this.btndescargar.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.btndescargar.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
             this.btndescargar.UseVisualStyleBackColor = true;
+            this.btndescargar.Visible = false;
             this.btndescargar.Click += new System.EventHandler(this.btndescargar_Click);
             // 
             // dgvdata
@@ -292,6 +293,7 @@
             this.btnvizualizar.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.btnvizualizar.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
             this.btnvizualizar.UseVisualStyleBackColor = true;
+            this.btnvizualizar.Visible = false;
             // 
             // frmdetalleregistrar
             // 
@@ -309,9 +311,10 @@
             this.Controls.Add(this.txtbusqueda);
             this.Controls.Add(this.label9);
             this.Controls.Add(this.label10);
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "frmdetalleregistrar";
             this.Text = "frmdetalleregistrar";
+            this.Load += new System.EventHandler(this.frmdetalleregistrar_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dgvdata)).EndInit();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();

@@ -19,7 +19,7 @@ namespace CapaDatos
             {
                 try
                 {
-                    SqlCommand cmd = new SqlCommand("usp_Obtenerreporteacta", oConexion);
+                    SqlCommand cmd = new SqlCommand("SP_OBTENER_REPORTE_ACTA", oConexion);
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("@FechaInicio", fechainicio);
                     cmd.Parameters.AddWithValue("@FechaFin", fechafin);
@@ -37,11 +37,11 @@ namespace CapaDatos
                                 NombreFarmacia = dr["NombreFarmacia"].ToString(),
                                 CodigoEquipo = dr["CodigoEquipo"].ToString(),
                                 NombreEquipo = dr["NombreEquipo"].ToString(),
-                                Estado = dr["Estado"].ToString(),
                                 Cantidad = Convert.ToInt32(dr["Cantidad"]),
                                 NumeroSerial = dr["NumeroSerial"].ToString(),
                                 Caja = dr["Caja"].ToString(),
-                                EstadoAutorizacion = dr["EstadoAutorizacion"].ToString()
+                                EstadoAutorizacion = dr["EstadoAutorizacion"].ToString(),
+                                NombreCompleto = dr["NombreCompleto"].ToString()
                             });
                         }
                     }
@@ -63,7 +63,7 @@ namespace CapaDatos
             {
                 try
                 {
-                    SqlCommand cmd = new SqlCommand("sp_ReporteRegistrar", oconexion);
+                    SqlCommand cmd = new SqlCommand("SP_REPORTE_REGISTRAR", oconexion);
                     cmd.Parameters.AddWithValue("@fechainicio", fechainicio);
                     cmd.Parameters.AddWithValue("@fechafin", fechafin);
                     cmd.CommandType = CommandType.StoredProcedure;
@@ -95,6 +95,46 @@ namespace CapaDatos
                     lista = new List<ReporteRegistrar>();
                 }
             }
+            return lista;
+        }
+
+        public List<Auditoria> ObtenerAuditoria(string tabla, string fechainicio, string fechafin)
+        {
+            List<Auditoria> lista = new List<Auditoria>();
+
+            using (SqlConnection oconexion = new SqlConnection(Conexion.cadena))
+            {
+                try
+                {
+                    SqlCommand cmd = new SqlCommand("SP_Reporte_Auditoria", oconexion);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@FechaInicio", fechainicio);
+                    cmd.Parameters.AddWithValue("@FechaFin", fechafin);
+
+                    oconexion.Open();
+
+                    using (SqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        while (dr.Read())
+                        {
+                            lista.Add(new Auditoria
+                            {
+                                IdAuditoria = Convert.ToInt32(dr["IdAuditoria"]),
+                                Tabla = dr["Tabla"].ToString(),
+                                Operacion = dr["Operacion"].ToString(),
+                                Usuario = dr["Usuario"].ToString(),
+                                Fecha = Convert.ToDateTime(dr["Fecha"]).ToString("dd/MM/yyyy HH:mm"),
+                                Datos = dr["Datos"].ToString()
+                            });
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    lista = new List<Auditoria>();
+                }
+            }
+
             return lista;
         }
 

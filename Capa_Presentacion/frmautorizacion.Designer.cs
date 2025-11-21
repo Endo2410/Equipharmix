@@ -107,7 +107,6 @@
             this.txtid.Size = new System.Drawing.Size(25, 20);
             this.txtid.TabIndex = 139;
             this.txtid.Text = "0";
-            this.txtid.Visible = false;
             // 
             // label10
             // 

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        table.border {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        table.border th {
+            border: 1px solid black;
+            padding: 5px;
+            text-align: center;
+            background-color: #CACACA;
+            font-size: 12px;
+        }
+
+        table.border td {
+            border: 1px solid black;
+            padding: 5px;
+            text-align: center;
+            font-size: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Encabezado -->
+    <table style="width:100%; border:0; margin-bottom:5px;">
+        <tr>
+            <td style="width:15%"></td>
+            <td style="width:70%; text-align:center;">
+                <label style="font-size:25px;font-weight:bold;">@nombrenegocio</label><br />
+                <label style="font-size:18px;">RUC: @docnegocio</label><br />
+                <label style="font-size:18px;">Dirección: @direcnegocio</label><br />
+            </td>
+            <td style="width:15%"></td>
+        </tr>
+    </table>
+
+    <hr style="margin-top:15px; margin-bottom:10px;" />
+
+    <h3 style="text-align:center; margin-bottom:10px;">Reporte de Actas</h3>
+
+    <table class="border">
+        <thead>
+            <tr>
+                <th>Número Doc</th>
+                <th>Fecha</th>
+                <th>Farmacia</th>
+                <th>Código</th>
+                <th>Equipo</th>
+                <th>Cant</th>
+                <th>Serial</th>
+                <th>Caja</th>
+                <th>Estado</th>
+                <th>Usuario</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @filas
+        </tbody>
+    </table>
+
+</body>
+</html>

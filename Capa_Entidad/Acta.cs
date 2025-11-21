@@ -13,7 +13,7 @@ namespace CapaEntidad
         public string TipoDocumento { get; set; }
         public string NumeroDocumento { get; set; }
 
-        public int IdFarmacia { get; set; } // ← Asegúrate de tener esta propiedad
+        public int IdFarmacia { get; set; } 
 
         public string Nombre { get; set; }
         public string Codigo { get; set; }

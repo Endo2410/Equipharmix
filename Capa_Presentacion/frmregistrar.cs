@@ -27,6 +27,15 @@ namespace CapaPresentacion
 
         private void frmregistrar_Load(object sender, EventArgs e)
         {
+            // Obtiene los permisos del usuario logueado
+            List<Permiso> listaPermisos = new CN_Permiso().Listar(Inicio.usuarioActual.IdUsuario);
+
+            // Controla visibilidad de los botones según permisos
+            btnagregarequipo.Visible = UtilPermisos.TienePermisoAccion(listaPermisos, "submenuregistrarcompra", "btnagregarequipo");
+            btnregistrar.Visible = UtilPermisos.TienePermisoAccion(listaPermisos, "submenuregistrarcompra", "btnregistrar");
+
+
+
             // Agrega columna imagen si no existe
             if (!dgvdata.Columns.Contains("btneliminar"))
             {

@@ -1,6 +1,6 @@
 ﻿namespace CapaPresentacion
 {
-    partial class frmrecuperar
+    partial class frmbaja
     {
         /// <summary>
         /// Required designer variable.
@@ -535,7 +535,7 @@
             this.label18.TabIndex = 246;
             this.label18.Text = "Marca";
             // 
-            // frmrecuperar
+            // frmbaja
             // 
             this.AcceptButton = this.btnbuscar;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -585,8 +585,8 @@
             this.Controls.Add(this.label9);
             this.Controls.Add(this.label1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-            this.Name = "frmrecuperar";
-            this.Text = "frmrecuperar";
+            this.Name = "frmbaja";
+            this.Text = "frmbaja";
             this.Load += new System.EventHandler(this.frmrecuperar_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dgvdata)).EndInit();
             this.ResumeLayout(false);

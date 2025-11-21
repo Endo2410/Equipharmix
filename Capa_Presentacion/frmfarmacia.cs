@@ -22,6 +22,13 @@ namespace CapaPresentacion
 
         private void frmfarmacia_Load(object sender, EventArgs e)
         {
+            // Obtiene los permisos del usuario logueado
+            List<Permiso> listaPermisos = new CN_Permiso().Listar(Inicio.usuarioActual.IdUsuario);
+
+            // Controla visibilidad de los botones según permisos
+            btnguardar.Visible = UtilPermisos.TienePermisoAccion(listaPermisos, "menufarmacia", "btnguardar");
+            btnlimpiar.Visible = UtilPermisos.TienePermisoAccion(listaPermisos, "menufarmacia", "btnlimpiar");
+
             try
             {
                 txtcodigo.MaxLength = 50;
@@ -56,6 +63,7 @@ namespace CapaPresentacion
                         item.IdFarmacia,
                         item.Codigo,
                         item.Nombre,
+                        item.Correo,
                         item.Telefono,
                         item.Estado == true ? 1 : 0,
                         item.Estado == true ? "Activo" : "No Activo"
@@ -77,6 +85,7 @@ namespace CapaPresentacion
                 txtid.Text = "0";
                 txtcodigo.Text = "";
                 txtnombre.Text = "";
+                txtcorreo.Text = "";
                 txttelefono.Text = "";
                 cboestado.SelectedIndex = 0;
                 txtcodigo.Select();
@@ -98,6 +107,7 @@ namespace CapaPresentacion
                     IdFarmacia = Convert.ToInt32(txtid.Text),
                     Codigo = txtcodigo.Text,
                     Nombre = txtnombre.Text,
+                    Correo = txtcorreo.Text,
                     Telefono = txttelefono.Text,
                     Estado = Convert.ToInt32(((OpcionCombo)cboestado.SelectedItem).Valor) == 1 ? true : false
                 };
@@ -113,6 +123,7 @@ namespace CapaPresentacion
                             idgenerado,
                             txtcodigo.Text,
                             txtnombre.Text,
+                            txtcorreo.Text,
                             txttelefono.Text,
                             ((OpcionCombo)cboestado.SelectedItem).Valor.ToString(),
                             ((OpcionCombo)cboestado.SelectedItem).Texto.ToString()
@@ -135,6 +146,7 @@ namespace CapaPresentacion
                         row.Cells["Id"].Value = txtid.Text;
                         row.Cells["Codigo"].Value = txtcodigo.Text;
                         row.Cells["Nombre"].Value = txtnombre.Text;
+                        row.Cells["Correo"].Value = txtcorreo.Text;
                         row.Cells["Telefono"].Value = txttelefono.Text;
                         row.Cells["EstadoValor"].Value = ((OpcionCombo)cboestado.SelectedItem).Valor.ToString();
                         row.Cells["Estado"].Value = ((OpcionCombo)cboestado.SelectedItem).Texto.ToString();
@@ -236,6 +248,7 @@ namespace CapaPresentacion
                         txtid.Text = dgvdata.Rows[indice].Cells["Id"].Value.ToString();
                         txtcodigo.Text = dgvdata.Rows[indice].Cells["Codigo"].Value.ToString();
                         txtnombre.Text = dgvdata.Rows[indice].Cells["Nombre"].Value.ToString();
+                        txtcorreo.Text = dgvdata.Rows[indice].Cells["Correo"].Value.ToString();
                         txttelefono.Text = dgvdata.Rows[indice].Cells["Telefono"].Value.ToString();
 
                         foreach (OpcionCombo oc in cboestado.Items)

@@ -166,4 +166,16 @@
   <data name="_6525366" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\6525366.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="PlantillaActas" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\PlantillaActas.html;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="PlantillaFarmacia" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\PlantillaFarmacia.html;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="PlantillaRegistrar" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\PlantillaRegistrar.html;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="PlantillaAuditoria" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\PlantillaAuditoria.html;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
 </root>

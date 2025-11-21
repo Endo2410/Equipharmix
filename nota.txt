@@ -1,0 +1,1 @@
+volver a crear el sp SP_AUTORIZAR_EQUIPO_PENDIENTE

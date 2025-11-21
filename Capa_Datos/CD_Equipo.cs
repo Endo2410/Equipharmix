@@ -1,4 +1,5 @@
 ﻿using CapaEntidad;
+using CapaPresentacion.Utilidades;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -19,15 +20,10 @@ namespace CapaDatos
 
             using (SqlConnection oconexion = new SqlConnection(Conexion.cadena))
             {
-
                 try
                 {
-                    StringBuilder query = new StringBuilder();
-                    query.AppendLine("select IdEquipo, Codigo, Nombre, p.Descripcion,c.IdMarca,c.Descripcion[DescripcionMarca],Stock,e.IdEstado,e.Descripcion[DescripcionEstado]  from Equipo p");
-                    query.AppendLine("inner join Marca c on c.IdMarca = p.IdMarca");
-                    query.AppendLine("inner join Estado e on e.IdEstado = p.IdEstado");
-                    SqlCommand cmd = new SqlCommand(query.ToString(), oconexion);
-                    cmd.CommandType = CommandType.Text;
+                    SqlCommand cmd = new SqlCommand("SP_LISTAR_EQUIPO", oconexion);
+                    cmd.CommandType = CommandType.StoredProcedure;
 
                     oconexion.Open();
 
@@ -41,19 +37,27 @@ namespace CapaDatos
                                 Codigo = dr["Codigo"].ToString(),
                                 Nombre = dr["Nombre"].ToString(),
                                 Descripcion = dr["Descripcion"].ToString(),
-                                oMarca = new Marca() { IdMarca = Convert.ToInt32(dr["IdMarca"]), Descripcion = dr["DescripcionMarca"].ToString() },
-                                Stock = Convert.ToInt32(dr["Stock"].ToString()),
-                                oEstado = new Estado() { IdEstado = Convert.ToInt32(dr["IdEstado"]), Descripcion = dr["DescripcionEstado"].ToString() }
+                                oMarca = new Marca()
+                                {
+                                    IdMarca = Convert.ToInt32(dr["IdMarca"]),
+                                    Descripcion = dr["DescripcionMarca"].ToString()
+                                },
+                                Stock = Convert.ToInt32(dr["Stock"]),
+                                oEstado = new Estado()
+                                {
+                                    IdEstado = Convert.ToInt32(dr["IdEstado"]),
+                                    Descripcion = dr["DescripcionEstado"].ToString()
+                                }
                             });
                         }
                     }
                 }
-                catch (Exception ex)
+                catch
                 {
-
                     lista = new List<Equipo>();
                 }
             }
+
             return lista;
         }
 
@@ -67,8 +71,17 @@ namespace CapaDatos
             {
                 using (SqlConnection oconexion = new SqlConnection(Conexion.cadena))
                 {
+                    oconexion.Open();
 
-                    SqlCommand cmd = new SqlCommand("sp_RegistrarEquipo", oconexion);
+                    // Guardar usuario logueado en SESSION_CONTEXT
+                    using (SqlCommand cmdt = new SqlCommand("EXEC sp_set_session_context @key, @value", oconexion))
+                    {
+                        cmdt.Parameters.AddWithValue("@key", "Usuario");
+                        cmdt.Parameters.AddWithValue("@value", UsuarioSesion.NombreCompleto);
+                        cmdt.ExecuteNonQuery();
+                    }
+
+                    SqlCommand cmd = new SqlCommand("SP_REGISTRAR_EQUIPO", oconexion);
                     cmd.Parameters.AddWithValue("Codigo", obj.Codigo);
                     cmd.Parameters.AddWithValue("Nombre", obj.Nombre);
                     cmd.Parameters.AddWithValue("Descripcion", obj.Descripcion);
@@ -78,7 +91,6 @@ namespace CapaDatos
                     cmd.Parameters.Add("Mensaje", SqlDbType.VarChar, 500).Direction = ParameterDirection.Output;
                     cmd.CommandType = CommandType.StoredProcedure;
 
-                    oconexion.Open();
 
                     cmd.ExecuteNonQuery();
 
@@ -105,8 +117,18 @@ namespace CapaDatos
 
                 using (SqlConnection oconexion = new SqlConnection(Conexion.cadena))
                 {
+                    oconexion.Open();
 
-                    SqlCommand cmd = new SqlCommand("sp_ModificarEquipo", oconexion);
+                    // Guardar usuario logueado en SESSION_CONTEXT
+                    using (SqlCommand cmdt = new SqlCommand("EXEC sp_set_session_context @key, @value", oconexion))
+                    {
+                        cmdt.Parameters.AddWithValue("@key", "Usuario");
+                        cmdt.Parameters.AddWithValue("@value", UsuarioSesion.NombreCompleto);
+                        cmdt.ExecuteNonQuery();
+                    }
+
+
+                    SqlCommand cmd = new SqlCommand("SP_MODIFICAR_EQUIPO", oconexion);
                     cmd.Parameters.AddWithValue("IdEquipo", obj.IdEquipo);
                     cmd.Parameters.AddWithValue("Codigo", obj.Codigo);
                     cmd.Parameters.AddWithValue("Nombre", obj.Nombre);
@@ -116,8 +138,6 @@ namespace CapaDatos
                     cmd.Parameters.Add("Resultado", SqlDbType.Int).Direction = ParameterDirection.Output;
                     cmd.Parameters.Add("Mensaje", SqlDbType.VarChar, 500).Direction = ParameterDirection.Output;
                     cmd.CommandType = CommandType.StoredProcedure;
-
-                    oconexion.Open();
 
                     cmd.ExecuteNonQuery();
 

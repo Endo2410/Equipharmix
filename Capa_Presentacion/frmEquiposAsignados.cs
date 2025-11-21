@@ -29,6 +29,15 @@ namespace CapaPresentacion
 
         private void frmEquiposAsignados_Load(object sender, EventArgs e)
         {
+            // Obtiene los permisos del usuario logueado
+            List<Permiso> listaPermisos = new CN_Permiso().Listar(Inicio.usuarioActual.IdUsuario);
+
+            // Controla visibilidad de los botones según permisos
+            btnguardarmotivo.Visible = UtilPermisos.TienePermisoAccion(listaPermisos, "menuasiganados", "btnguardarmotivo");
+            btnlimpiar.Visible = UtilPermisos.TienePermisoAccion(listaPermisos, "menuasiganados", "btnlimpiar");
+            btneliminar.Visible = UtilPermisos.TienePermisoAccion(listaPermisos, "menuasiganados", "btneliminar");
+            btnexportar.Visible = UtilPermisos.TienePermisoAccion(listaPermisos, "menuasiganados", "btnexportar");
+
             try
             {
                 if (dgvdata.Columns.Count == 0)

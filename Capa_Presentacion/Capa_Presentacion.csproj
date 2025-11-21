@@ -27,7 +27,7 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>22</ApplicationRevision>
+    <ApplicationRevision>23</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -360,6 +360,12 @@
     <Compile Include="frmfarmacia.Designer.cs">
       <DependentUpon>frmfarmacia.cs</DependentUpon>
     </Compile>
+    <Compile Include="frmlistarprestamo.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmlistarprestamo.Designer.cs">
+      <DependentUpon>frmlistarprestamo.cs</DependentUpon>
+    </Compile>
     <Compile Include="frmmarca.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -372,11 +378,29 @@
     <Compile Include="frmNegocio.Designer.cs">
       <DependentUpon>frmNegocio.cs</DependentUpon>
     </Compile>
-    <Compile Include="frmrecuperar.cs">
+    <Compile Include="frmodetalleprestamo.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="frmrecuperar.Designer.cs">
-      <DependentUpon>frmrecuperar.cs</DependentUpon>
+    <Compile Include="frmodetalleprestamo.Designer.cs">
+      <DependentUpon>frmodetalleprestamo.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmpermiso.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmpermiso.Designer.cs">
+      <DependentUpon>frmpermiso.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmbaja.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmbaja.Designer.cs">
+      <DependentUpon>frmbaja.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmprestamo.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmprestamo.Designer.cs">
+      <DependentUpon>frmprestamo.cs</DependentUpon>
     </Compile>
     <Compile Include="frmregistrar.cs">
       <SubType>Form</SubType>
@@ -389,6 +413,18 @@
     </Compile>
     <Compile Include="frmreporteacta.Designer.cs">
       <DependentUpon>frmreporteacta.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmreporteauditoria.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmreporteauditoria.Designer.cs">
+      <DependentUpon>frmreporteauditoria.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmreportefarmacia.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmreportefarmacia.Designer.cs">
+      <DependentUpon>frmreportefarmacia.cs</DependentUpon>
     </Compile>
     <Compile Include="frmreporteregistrar.cs">
       <SubType>Form</SubType>
@@ -440,8 +476,15 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="frmroles.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmroles.Designer.cs">
+      <DependentUpon>frmroles.cs</DependentUpon>
+    </Compile>
     <Compile Include="Utilidades\Encriptacion.cs" />
     <Compile Include="Utilidades\OpcionCombo.cs" />
+    <Compile Include="Utilidades\UtilPermisos.cs" />
     <EmbeddedResource Include="Bienvenido.resx">
       <DependentUpon>Bienvenido.cs</DependentUpon>
     </EmbeddedResource>
@@ -469,20 +512,38 @@
     <EmbeddedResource Include="frmfarmacia.resx">
       <DependentUpon>frmfarmacia.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="frmlistarprestamo.resx">
+      <DependentUpon>frmlistarprestamo.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="frmmarca.resx">
       <DependentUpon>frmmarca.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="frmNegocio.resx">
       <DependentUpon>frmNegocio.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="frmrecuperar.resx">
-      <DependentUpon>frmrecuperar.cs</DependentUpon>
+    <EmbeddedResource Include="frmodetalleprestamo.resx">
+      <DependentUpon>frmodetalleprestamo.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmpermiso.resx">
+      <DependentUpon>frmpermiso.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmbaja.resx">
+      <DependentUpon>frmbaja.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmprestamo.resx">
+      <DependentUpon>frmprestamo.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="frmregistrar.resx">
       <DependentUpon>frmregistrar.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="frmreporteacta.resx">
       <DependentUpon>frmreporteacta.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmreporteauditoria.resx">
+      <DependentUpon>frmreporteauditoria.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmreportefarmacia.resx">
+      <DependentUpon>frmreportefarmacia.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="frmreporteregistrar.resx">
       <DependentUpon>frmreporteregistrar.cs</DependentUpon>
@@ -518,6 +579,9 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <EmbeddedResource Include="frmroles.resx">
+      <DependentUpon>frmroles.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="Capa_Presentacion_TemporaryKey.pfx" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
@@ -596,9 +660,14 @@
     <Content Include="fs.ico" />
     <None Include="Resources\6525366.ico" />
     <None Include="Resources\equipo.ico" />
+    <None Include="Resources\PlantillaFarmacia.html" />
+    <None Include="Resources\PlantillaActas.html" />
+    <None Include="Resources\PlantillaRegistrar.html" />
+    <None Include="Resources\PlantillaAuditoria.html" />
     <Content Include="Utilidades\piloto\acta_temp.html" />
     <Content Include="Utilidades\piloto\firma.png" />
     <Content Include="Utilidades\piloto\logo.png" />
+    <Content Include="Utilidades\piloto\prestamo.html" />
     <Content Include="Utilidades\piloto\plantilla.html" />
     <Content Include="Utilidades\piloto\sello.png" />
     <Content Include="Utilidades\wkhtmltopdf.exe" />

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        table.border {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+            table.border th {
+                border: 1px solid black;
+                padding: 5px;
+                text-align: center;
+                background-color: #CACACA;
+                font-size: 12px; /* Tamaño encabezado */
+                font-weight: bold;
+            }
+
+            table.border td {
+                border: 1px solid black;
+                padding: 5px;
+                text-align: center;
+                font-size: 12px; /* Tamaño filas */
+            }
+    </style>
+</head>
+<body>
+    <!-- Logo y encabezado del negocio -->
+    <table style="width:100%; border:0; margin-bottom:5px;">
+        <tr>
+            <td style="width:15%">
+                <!-- Aquí se insertará la imagen con iTextSharp -->
+            </td>
+            <td style="width:70%; text-align:center;">
+                <label style="font-size:25px;font-weight:bold;">@nombrenegocio</label><br />
+                <label style="font-size:18px;">RUC: @docnegocio</label><br />
+                <label style="font-size:18px;">Dirección: @direcnegocio</label><br />
+            </td>
+            <td style="width:15%"></td>
+        </tr>
+    </table>
+
+    <!-- Línea horizontal -->
+    <hr style="margin-top:10px; margin-bottom:10px;" />
+
+    <h3 style="text-align:center; margin-bottom:10px;">Reporte de Registro de Equipos</h3>
+
+    <table class="border">
+        <thead>
+            <tr>
+                <th>Fecha Registro</th>
+                <th>Tipo Doc</th>
+                <th>N° Documento</th>
+                <th>Usuario</th>
+                <th>Código</th>
+                <th>Nombre</th>
+                <th>Marca</th>
+                <th>Cant</th>
+            </tr>
+        </thead>
+        <tbody>
+            @filas
+        </tbody>
+    </table>
+
+</body>
+</html>

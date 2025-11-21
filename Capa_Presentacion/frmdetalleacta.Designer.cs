@@ -73,7 +73,7 @@
             this.btndescargar.IconFont = FontAwesome.Sharp.IconFont.Auto;
             this.btndescargar.IconSize = 17;
             this.btndescargar.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.btndescargar.Location = new System.Drawing.Point(715, 493);
+            this.btndescargar.Location = new System.Drawing.Point(718, 525);
             this.btndescargar.Name = "btndescargar";
             this.btndescargar.Size = new System.Drawing.Size(134, 21);
             this.btndescargar.TabIndex = 239;
@@ -131,7 +131,7 @@
             dataGridViewCellStyle2.SelectionForeColor = System.Drawing.Color.Black;
             this.dgvdata.RowsDefaultCellStyle = dataGridViewCellStyle2;
             this.dgvdata.RowTemplate.Height = 28;
-            this.dgvdata.Size = new System.Drawing.Size(620, 198);
+            this.dgvdata.Size = new System.Drawing.Size(620, 230);
             this.dgvdata.TabIndex = 232;
             // 
             // Equipo
@@ -376,6 +376,7 @@
             this.txtcaja.Location = new System.Drawing.Point(488, 39);
             this.txtcaja.Margin = new System.Windows.Forms.Padding(2);
             this.txtcaja.Name = "txtcaja";
+            this.txtcaja.ReadOnly = true;
             this.txtcaja.Size = new System.Drawing.Size(118, 21);
             this.txtcaja.TabIndex = 221;
             // 
@@ -393,6 +394,7 @@
             this.txtnumeroserial.Location = new System.Drawing.Point(328, 39);
             this.txtnumeroserial.Margin = new System.Windows.Forms.Padding(2);
             this.txtnumeroserial.Name = "txtnumeroserial";
+            this.txtnumeroserial.ReadOnly = true;
             this.txtnumeroserial.Size = new System.Drawing.Size(156, 21);
             this.txtnumeroserial.TabIndex = 219;
             // 

@@ -11,21 +11,17 @@ namespace CapaDatos
 {
     public class CD_Estado
     {
-        //Mostrar lista de Marcas
+        //Mostrar lista de Estado
         public List<Estado> Listar()
         {
             List<Estado> lista = new List<Estado>();
 
             using (SqlConnection oconexion = new SqlConnection(Conexion.cadena))
             {
-
                 try
                 {
-
-                    StringBuilder query = new StringBuilder();
-                    query.AppendLine("select IdMarca,Descripcion,Estado from Marca");
-                    SqlCommand cmd = new SqlCommand(query.ToString(), oconexion);
-                    cmd.CommandType = CommandType.Text;
+                    SqlCommand cmd = new SqlCommand("SP_LISTAR_ESTADO", oconexion);
+                    cmd.CommandType = CommandType.StoredProcedure;
 
                     oconexion.Open();
 
@@ -33,7 +29,6 @@ namespace CapaDatos
                     {
                         while (dr.Read())
                         {
-
                             lista.Add(new Estado()
                             {
                                 IdEstado = Convert.ToInt32(dr["IdEstado"]),
@@ -42,15 +37,13 @@ namespace CapaDatos
                         }
                     }
                 }
-                catch (Exception)
+                catch
                 {
-
                     lista = new List<Estado>();
                 }
             }
 
             return lista;
-
         }
     }
 }

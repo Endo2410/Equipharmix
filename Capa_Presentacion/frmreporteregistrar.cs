@@ -1,16 +1,20 @@
 ﻿using CapaEntidad;
 using CapaNegocio;
 using CapaPresentacion.Utilidades;
+using ClosedXML.Excel;
+using iTextSharp.text.pdf;
+using iTextSharp.tool.xml;
+using iTextSharp.text;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using ClosedXML.Excel;
 
 namespace CapaPresentacion
 {
@@ -23,6 +27,12 @@ namespace CapaPresentacion
 
         private void frmreporteregistrar_Load(object sender, EventArgs e)
         {
+            // Obtiene los permisos del usuario logueado
+            List<Permiso> listaPermisos = new CN_Permiso().Listar(Inicio.usuarioActual.IdUsuario);
+
+            // Controla visibilidad de los botones según permisos
+            btnexportar.Visible = UtilPermisos.TienePermisoAccion(listaPermisos, "submenureporteregistrar", "btnexportar");
+
             foreach (DataGridViewColumn columna in dgvdata.Columns)
             {
                 cbobusqueda.Items.Add(new OpcionCombo() { Valor = columna.Name, Texto = columna.HeaderText });
@@ -65,6 +75,7 @@ namespace CapaPresentacion
                 txtfechainicio.Value.ToString("yyyy-MM-dd"),
                 txtfechafin.Value.ToString("yyyy-MM-dd")
             );
+
 
             // Limpiar el DataGridView antes de llenarlo
             dgvdata.Rows.Clear();
@@ -143,6 +154,93 @@ namespace CapaPresentacion
                 {
                     MessageBox.Show("Error al exportar:\n" + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
+            }
+        }
+
+        private void btndescargar_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (dgvdata.Rows.Count < 1)
+                {
+                    MessageBox.Show("No hay registros para exportar", "Mensaje",
+                        MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    return;
+                }
+
+                string html = Properties.Resources.PlantillaRegistrar.ToString();
+
+                // Datos del negocio
+                Negocio datos = new CN_Negocio().ObtenerDatos();
+                html = html.Replace("@nombrenegocio", datos.Nombre.ToUpper());
+                html = html.Replace("@docnegocio", datos.RUC);
+                html = html.Replace("@direcnegocio", datos.Direccion);
+
+                // Construcción de filas para la tabla del PDF
+                string filas = "";
+
+                foreach (DataGridViewRow row in dgvdata.Rows)
+                {
+                    if (!row.Visible) continue;
+
+                    filas += "<tr>";
+                    filas += $"<td>{row.Cells["FechaRegistro"].Value}</td>";
+                    filas += $"<td>{row.Cells["TipoDocumento"].Value}</td>";
+                    filas += $"<td>{row.Cells["NumeroDocumento"].Value}</td>";
+                    filas += $"<td>{row.Cells["UsuarioRegistro"].Value}</td>";
+                    filas += $"<td>{row.Cells["Codigo"].Value}</td>";
+                    filas += $"<td>{row.Cells["Nombre"].Value}</td>";
+                    filas += $"<td>{row.Cells["Marca"].Value}</td>";
+                    filas += $"<td>{row.Cells["Cantidad"].Value}</td>";
+                    filas += "</tr>";
+                }
+
+                html = html.Replace("@filas", filas);
+
+                SaveFileDialog savefile = new SaveFileDialog();
+                savefile.FileName = $"Reporte_Registrar_{DateTime.Now:yyyyMMddHHmmss}.pdf";
+                savefile.Filter = "PDF Files|*.pdf";
+
+                if (savefile.ShowDialog() == DialogResult.OK)
+                {
+                    using (FileStream stream = new FileStream(savefile.FileName, FileMode.Create))
+                    {
+                        Document pdfDoc = new Document(PageSize.A4, 25, 25, 90, 25);
+                        PdfWriter writer = PdfWriter.GetInstance(pdfDoc, stream);
+                        pdfDoc.Open();
+
+                        // LOGO ENCIMA DE LA LÍNEA
+                        bool obtenido;
+                        byte[] byteImage = new CN_Negocio().ObtenerLogo(out obtenido);
+
+                        if (obtenido)
+                        {
+                            iTextSharp.text.Image img = iTextSharp.text.Image.GetInstance(byteImage);
+                            img.ScaleToFit(70, 70);
+
+                            // Ajusta la posición vertical del logo
+                            img.SetAbsolutePosition(pdfDoc.Left + 5, pdfDoc.Top - 50);
+
+                            pdfDoc.Add(img);
+                        }
+
+                        using (StringReader sr = new StringReader(html))
+                        {
+                            XMLWorkerHelper.GetInstance().ParseXHtml(writer, pdfDoc, sr);
+                        }
+
+                        pdfDoc.Close();
+                        stream.Close();
+                    }
+
+                    MessageBox.Show("PDF generado correctamente", "Mensaje",
+                        MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error al generar el PDF: " + ex.Message, "Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
     }

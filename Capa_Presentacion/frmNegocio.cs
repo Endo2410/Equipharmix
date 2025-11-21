@@ -1,4 +1,7 @@
-﻿using System;
+﻿using CapaEntidad;
+using CapaNegocio;
+using CapaPresentacion.Utilidades;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -8,8 +11,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using CapaEntidad;
-using CapaNegocio;
 
 namespace CapaPresentacion
 {
@@ -22,15 +23,26 @@ namespace CapaPresentacion
 
         public Image ByteToImage(byte[] imageBytes)
         {
-            MemoryStream ms = new MemoryStream();
-            ms.Write(imageBytes, 0, imageBytes.Length);
-            Image image = new Bitmap(ms);
+            if (imageBytes == null || imageBytes.Length == 0)
+                return null;
 
-            return image;
+            using (MemoryStream ms = new MemoryStream(imageBytes))
+            {
+                return Image.FromStream(ms);
+            }
         }
+
 
         private void frmNegocio_Load(object sender, EventArgs e)
         {
+            // Obtiene los permisos del usuario logueado
+            List<Permiso> listaPermisos = new CN_Permiso().Listar(Inicio.usuarioActual.IdUsuario);
+
+            // Controla visibilidad de los botones según permisos
+            btnsubir.Visible = UtilPermisos.TienePermisoAccion(listaPermisos, "submenunegocio", "btnsubir");
+            btnguardarcambios.Visible = UtilPermisos.TienePermisoAccion(listaPermisos, "submenunegocio", "btnguardarcambios");
+
+
             bool obtenido = true;
             byte[] byteimage = new CN_Negocio().ObtenerLogo(out obtenido);
 
@@ -49,7 +61,8 @@ namespace CapaPresentacion
             string mensaje = string.Empty;
 
             OpenFileDialog oOpenFileDialog = new OpenFileDialog();
-            oOpenFileDialog.FileName = "Files|*.jpg;*.jpeg;*.png";
+            oOpenFileDialog.Filter = "Archivos de Imagen|*.jpg;*.jpeg;*.png";
+
 
             if (oOpenFileDialog.ShowDialog() == DialogResult.OK)
             {
@@ -66,7 +79,7 @@ namespace CapaPresentacion
         }
 
         private void btnguardarcambios_Click(object sender, EventArgs e)
-        {
+        { 
             string mensaje = string.Empty;
 
             Negocio obj = new Negocio()
@@ -79,9 +92,21 @@ namespace CapaPresentacion
             bool respuesta = new CN_Negocio().GuardarDatos(obj, out mensaje);
 
             if (respuesta)
+            {
                 MessageBox.Show("Los cambios fueron guardados", "Mensaje", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                // 🔥 REFRESCAR DATOS DESPUÉS DE GUARDAR
+                Negocio datos = new CN_Negocio().ObtenerDatos();
+                txtnombre.Text = datos.Nombre;
+                txtruc.Text = datos.RUC;
+                txtdireccion.Text = datos.Direccion;
+            }
             else
-                MessageBox.Show("No se pudo guardar los cambios", "Mensaje", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+            {
+                MessageBox.Show(mensaje, "Mensaje", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+            }
         }
     }
 }
+
+

@@ -14,6 +14,7 @@ namespace CapaNegocio
     {
         private CD_Acta objcd_Acta = new CD_Acta();
 
+
         public bool RestarStock(int idEquipo, int cantidad) {
             return objcd_Acta.RestarStock(idEquipo, cantidad);
         }
@@ -35,11 +36,7 @@ namespace CapaNegocio
             return $"{codigoFarmacia}-{correlativo.ToString("D5")}";
         }
 
-        public int ObtenerIdFarmaciaPorCodigo(string codigo)
-        {
-            return objcd_Acta.ObtenerIdFarmaciaPorCodigo(codigo);
-        }
-
+       
         public bool AutorizarBaja(string numeroDocumento, string codigoEquipo, string numeroSerial, int idUsuarioAutorizo)
         {
             return new CD_Acta().ActualizarEstadoBaja(numeroDocumento, codigoEquipo, numeroSerial, idUsuarioAutorizo);
@@ -113,10 +110,8 @@ namespace CapaNegocio
             return new CD_Acta().ObtenerEquiposPorFarmacia(codigoFarmacia);
         }
 
-        public bool AutorizarEquipoPendiente(string numeroDocumento, string codigoEquipo, string numeroSerial, int idUsuario, out string mensaje)
-        {
-            return new CD_Acta().AutorizarEquipoPendiente(numeroDocumento, codigoEquipo, numeroSerial, idUsuario, out mensaje);
-        }
+       
+
 
         public List<Detalle_Acta> ObtenerEquiposPorDocumento(string numeroDocumento)
         {
@@ -130,19 +125,26 @@ namespace CapaNegocio
                 throw new Exception("Error al obtener equipos por documento: " + ex.Message);
             }
         }
+        // Método público que la capa presentación puede llamar
+        public bool AutorizarEquipoPendiente(string numeroDocumento, string codigoEquipo, string numeroSerial, int idUsuario, out string mensaje)
+        {
+            return new CD_Acta().AutorizarEquipoPendiente(numeroDocumento, codigoEquipo, numeroSerial, idUsuario, out mensaje);
+        }
 
+        // Método para autorizar todos los equipos de un documento
         public bool AutorizarTodosLosEquiposDelDocumento(string numeroDocumento, int idUsuario, out string mensaje)
         {
             mensaje = "";
-            bool resultado = true;
+            bool resultadoFinal = true;
 
             try
             {
-                List<Detalle_Acta> equipos = ObtenerEquiposPorDocumento(numeroDocumento);
+                // Obtener todos los equipos del documento
+                List<Detalle_Acta> equipos = new CN_Acta().ObtenerEquiposPorDocumento(numeroDocumento);
 
                 foreach (var equipo in equipos)
                 {
-                    bool exito = AutorizarEquipoPendiente(
+                    bool resultado = AutorizarEquipoPendiente(
                         equipo.NumeroDocumento,
                         equipo.oEquipo.Codigo,
                         equipo.NumeroSerial,
@@ -150,15 +152,15 @@ namespace CapaNegocio
                         out string msg
                     );
 
-                    if (!exito)
+                    if (!resultado)
                     {
                         mensaje = $"Error al autorizar el equipo '{equipo.oEquipo.Codigo}' ({equipo.NumeroSerial}): {msg}";
-                        resultado = false;
+                        resultadoFinal = false;
                         break;
                     }
                 }
 
-                if (resultado)
+                if (resultadoFinal)
                 {
                     mensaje = "Todos los equipos del documento fueron autorizados correctamente.";
                 }
@@ -166,10 +168,10 @@ namespace CapaNegocio
             catch (Exception ex)
             {
                 mensaje = "Error general al autorizar equipos: " + ex.Message;
-                resultado = false;
+                resultadoFinal = false;
             }
 
-            return resultado;
+            return resultadoFinal;
         }
 
 

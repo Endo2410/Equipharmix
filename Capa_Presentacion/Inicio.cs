@@ -1,6 +1,7 @@
 ﻿using CapaEntidad;
 using CapaNegocio;
 using CapaPresentacion.Modales;
+using CapaPresentacion.Utilidades;
 using FontAwesome.Sharp;
 using System;
 using System.Collections.Generic;
@@ -40,20 +41,30 @@ namespace CapaPresentacion
             this.Cursor = Cursors.Hand;
             pb_salir.Cursor = Cursors.Hand;
 
+            List<Permiso> listaPermisos = new CN_Permiso().Listar(usuarioActual.IdUsuario);
 
-            List<Permiso> ListaPermisos = new CN_Permiso().Listar(usuarioActual.IdUsuario);
-
-            foreach (IconMenuItem iconmenu in menu.Items)
+            foreach (IconMenuItem menu in menu.Items)
             {
+                bool tieneModulo = listaPermisos.Any(p => p.oModulo != null && p.oModulo.NombreModulo == menu.Name);
+                menu.Visible = tieneModulo;
 
-                bool encontrado = ListaPermisos.Any(m => m.NombreMenu == iconmenu.Name);
-
-                if (encontrado == false)
+                foreach (ToolStripMenuItem sub in menu.DropDownItems)
                 {
-                    iconmenu.Visible = false;
-                }
+                    bool tieneSubMenu = listaPermisos.Any(p => p.oSubMenu != null && p.oSubMenu.NombreSubMenu == sub.Name);
+                    sub.Visible = tieneSubMenu;
 
+                    if (tieneSubMenu)
+                    {
+                        foreach (ToolStripMenuItem accion in sub.DropDownItems)
+                        {
+                            bool tieneAccion = listaPermisos.Any(p => p.oAccion != null && p.oAccion.NombreAccion == accion.Name);
+                            accion.Visible = tieneAccion;
+                        }
+                    }
+                }
             }
+
+            UsuarioSesion.IniciarSesion(usuarioActual.IdUsuario, usuarioActual.NombreCompleto);
             lblusuario.Text = usuarioActual.NombreCompleto;
         }
 
@@ -83,11 +94,7 @@ namespace CapaPresentacion
         }
 
         ///
-        private void menuusuarios_Click(object sender, EventArgs e)
-        {
-            AbrirFormulario((IconMenuItem)sender, new frmUsuarios());
-        }
-
+       
         private void submenumarca_Click_1(object sender, EventArgs e)
         {
             AbrirFormulario(menumantenedor, new frmmarca());
@@ -132,22 +139,10 @@ namespace CapaPresentacion
         private void menufarmacia_Click(object sender, EventArgs e)
         {
             AbrirFormulario((IconMenuItem)sender, new frmfarmacia());
+            //AbrirFormulario((IconMenuItem)sender, new frmlistarprestamo());
         }
 
-        private void autorizacionActaToolStripMenuItem_Click_1(object sender, EventArgs e)
-        {
-            AbrirFormulario(menuautorizacion, new frmactaautorizacion(usuarioActual));
-        }
-
-        private void autorizacionBajaToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            AbrirFormulario(menuautorizacion, new frmautorizacion(usuarioActual));
-        }
-
-        private void equiposDeBajaToolStripMenuItem_Click_1(object sender, EventArgs e)
-        {
-            AbrirFormulario(menuautorizacion, new frmrecuperar());
-        }
+      
 
         private void menuasiganados_Click_1(object sender, EventArgs e)
         {
@@ -186,11 +181,55 @@ namespace CapaPresentacion
         private void submenureporteacta_Click(object sender, EventArgs e)
         {
             AbrirFormulario(menureportes, new frmreporteacta());
+            //AbrirFormulario(menureportes, new frmreportefarmacia());
         }
 
         private void submenureporteregistrar_Click(object sender, EventArgs e)
         {
-            AbrirFormulario(menureportes, new frmreporteregistrar());
+            //AbrirFormulario(menureportes, new frmreporteregistrar());
+            AbrirFormulario(menureportes, new frmreporteauditoria());
+        }
+
+
+        private void submenuroles_Click_1(object sender, EventArgs e)
+        {
+            AbrirFormulario(menuseguridad, new frmroles());
+        }
+
+        private void submenupermisos_Click(object sender, EventArgs e)
+        {
+            AbrirFormulario(menuseguridad, new frmpermiso());
+        }
+
+        private void submenuusuarios_Click(object sender, EventArgs e)
+        {
+            AbrirFormulario(menuseguridad, new frmUsuarios());
+        }
+
+        private void submenuauctorizacionacta_Click(object sender, EventArgs e)
+        {
+            AbrirFormulario(menuautorizacion, new frmactaautorizacion(usuarioActual));
+        }
+
+        private void submenuautorizacionbaja_Click(object sender, EventArgs e)
+        {
+            AbrirFormulario(menuautorizacion, new frmautorizacion(usuarioActual));
+        }
+
+        private void submenuequiposbaja_Click(object sender, EventArgs e)
+        {
+            AbrirFormulario(menuautorizacion, new frmbaja());
+        }
+
+        private void submenuprestamo_Click(object sender, EventArgs e)
+        {
+            AbrirFormulario(menuprestamo, new frmprestamo(usuarioActual));
+        }
+
+        private void submenudetalleprestamo_Click(object sender, EventArgs e)
+        {
+            AbrirFormulario(menuprestamo, new frmodetalleprestamo());
         }
     }
 }
+

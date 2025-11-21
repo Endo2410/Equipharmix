@@ -3,12 +3,14 @@ using CapaNegocio;
 using CapaPresentacion.Utilidades;
 using ClosedXML.Excel;
 using DocumentFormat.OpenXml.Wordprocessing;
+using Org.BouncyCastle.Pqc.Crypto.Lms;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -24,12 +26,20 @@ namespace CapaPresentacion
 
         private void frmEquipo_Load(object sender, EventArgs e)
         {
+            // Obtiene los permisos del usuario logueado
+             List<Permiso> listaPermisos = new CN_Permiso().Listar(Inicio.usuarioActual.IdUsuario);
+
+            // Controla visibilidad de los botones según permisos
+            btnguardar.Visible = UtilPermisos.TienePermisoAccion(listaPermisos, "submenuequipo", "btnguardar");
+            btnlimpiar.Visible = UtilPermisos.TienePermisoAccion(listaPermisos, "submenuequipo", "btnlimpiar");
+            btnexportar.Visible = UtilPermisos.TienePermisoAccion(listaPermisos, "submenuequipo", "btnexportar");
+
             txtnombre.MaxLength = 30;
             txtdescripcion.MaxLength = 30;
             txtcodigo.MaxLength = 50;
 
             cboestado.Items.Add(new OpcionCombo() { Valor = 1, Texto = "Activo" });
-            cboestado.Items.Add(new OpcionCombo() { Valor = 0, Texto = "No Activo" });
+            cboestado.Items.Add(new OpcionCombo() { Valor = 2, Texto = "No Activo" });
             cboestado.DisplayMember = "Texto";
             cboestado.ValueMember = "Valor";
             cboestado.SelectedIndex = 0;

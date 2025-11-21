@@ -49,7 +49,14 @@ namespace CapaNegocio
 
         public bool ActualizarClave(int idUsuario, string nuevaClave)
         {
-            return objcd_usuario.ActualizarClave(idUsuario, nuevaClave);
+            try
+            {
+                return new CD_Usuario().ActualizarClave(idUsuario, nuevaClave);
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         // Método de validación reutilizable para registrar y editar
@@ -62,7 +69,6 @@ namespace CapaNegocio
                 mensaje.AppendLine("Es necesario el documento del usuario.");
             }
 
-            // Validación de nombre completo: solo letras y espacios
             if (string.IsNullOrWhiteSpace(obj.NombreCompleto))
             {
                 mensaje.AppendLine("Es necesario el nombre completo del usuario.");
@@ -72,7 +78,15 @@ namespace CapaNegocio
                 mensaje.AppendLine("El nombre completo solo debe contener letras y espacios.");
             }
 
-            // Validación de correo electrónico
+            if (string.IsNullOrWhiteSpace(obj.NombreUsuario))
+            {
+                mensaje.AppendLine("Es necesario el nombre de usuario.");
+            }
+            else if (!Regex.IsMatch(obj.NombreUsuario, @"^[a-zA-Z0-9._-]+$"))
+            {
+                mensaje.AppendLine("El nombre de usuario solo puede contener letras, números, puntos, guiones o guion bajo. No se permiten espacios.");
+            }
+
             if (string.IsNullOrWhiteSpace(obj.Correo))
             {
                 mensaje.AppendLine("Es necesario el correo del usuario.");
@@ -82,10 +96,22 @@ namespace CapaNegocio
                 mensaje.AppendLine("El formato del correo no es válido.");
             }
 
-            // Validación de clave
             if (string.IsNullOrWhiteSpace(obj.Clave))
             {
                 mensaje.AppendLine("Es necesario la clave del usuario.");
+            }
+
+            // 🔹 Validar duplicados usando la base de datos
+            List<Usuario> listaUsuarios = objcd_usuario.Listar();
+
+            if (listaUsuarios.Any(u => u.IdUsuario != obj.IdUsuario && u.Documento.Trim().Equals(obj.Documento.Trim(), StringComparison.OrdinalIgnoreCase)))
+            {
+                mensaje.AppendLine("El documento ya está registrado para otro usuario.");
+            }
+
+            if (listaUsuarios.Any(u => u.IdUsuario != obj.IdUsuario && u.NombreUsuario.Trim().Equals(obj.NombreUsuario.Trim(), StringComparison.OrdinalIgnoreCase)))
+            {
+                mensaje.AppendLine("El nombre de usuario ya está en uso.");
             }
 
             return mensaje.ToString();

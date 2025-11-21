@@ -41,6 +41,12 @@
             this.btncrearventa = new FontAwesome.Sharp.IconButton();
             this.label5 = new System.Windows.Forms.Label();
             this.dgvdata = new System.Windows.Forms.DataGridView();
+            this.IdEquipo = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Equipo = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Cantidad = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.NumeroSerial = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Caja = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.btneliminar = new System.Windows.Forms.DataGridViewButtonColumn();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.txtfecha = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
@@ -61,12 +67,6 @@
             this.txtstock = new System.Windows.Forms.TextBox();
             this.label8 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
-            this.IdEquipo = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Equipo = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Cantidad = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.NumeroSerial = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Caja = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.btneliminar = new System.Windows.Forms.DataGridViewButtonColumn();
             ((System.ComponentModel.ISupportInitialize)(this.txtcantidad)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgvdata)).BeginInit();
             this.groupBox1.SuspendLayout();
@@ -234,6 +234,58 @@
             this.dgvdata.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvdata_CellContentClick);
             this.dgvdata.CellPainting += new System.Windows.Forms.DataGridViewCellPaintingEventHandler(this.dgvdata_CellPainting);
             // 
+            // IdEquipo
+            // 
+            this.IdEquipo.HeaderText = "IdEquipo";
+            this.IdEquipo.MinimumWidth = 6;
+            this.IdEquipo.Name = "IdEquipo";
+            this.IdEquipo.ReadOnly = true;
+            this.IdEquipo.Visible = false;
+            this.IdEquipo.Width = 150;
+            // 
+            // Equipo
+            // 
+            this.Equipo.HeaderText = "Equipo";
+            this.Equipo.MinimumWidth = 6;
+            this.Equipo.Name = "Equipo";
+            this.Equipo.ReadOnly = true;
+            this.Equipo.Width = 125;
+            // 
+            // Cantidad
+            // 
+            this.Cantidad.HeaderText = "Cantidad";
+            this.Cantidad.MaxInputLength = 10;
+            this.Cantidad.MinimumWidth = 6;
+            this.Cantidad.Name = "Cantidad";
+            this.Cantidad.ReadOnly = true;
+            this.Cantidad.Width = 125;
+            // 
+            // NumeroSerial
+            // 
+            this.NumeroSerial.HeaderText = "Numero Serial";
+            this.NumeroSerial.MinimumWidth = 6;
+            this.NumeroSerial.Name = "NumeroSerial";
+            this.NumeroSerial.ReadOnly = true;
+            this.NumeroSerial.Width = 200;
+            // 
+            // Caja
+            // 
+            this.Caja.HeaderText = "Caja";
+            this.Caja.MinimumWidth = 6;
+            this.Caja.Name = "Caja";
+            this.Caja.ReadOnly = true;
+            this.Caja.Width = 125;
+            // 
+            // btneliminar
+            // 
+            this.btneliminar.HeaderText = "";
+            this.btneliminar.MinimumWidth = 6;
+            this.btneliminar.Name = "btneliminar";
+            this.btneliminar.ReadOnly = true;
+            this.btneliminar.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            this.btneliminar.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
+            this.btneliminar.Width = 35;
+            // 
             // groupBox1
             // 
             this.groupBox1.BackColor = System.Drawing.Color.White;
@@ -334,6 +386,7 @@
             this.txtdocumentocliente.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtdocumentocliente.Location = new System.Drawing.Point(9, 39);
             this.txtdocumentocliente.Name = "txtdocumentocliente";
+            this.txtdocumentocliente.ReadOnly = true;
             this.txtdocumentocliente.Size = new System.Drawing.Size(68, 21);
             this.txtdocumentocliente.TabIndex = 85;
             // 
@@ -356,6 +409,7 @@
             this.txtnombrecliente.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtnombrecliente.Location = new System.Drawing.Point(125, 39);
             this.txtnombrecliente.Name = "txtnombrecliente";
+            this.txtnombrecliente.ReadOnly = true;
             this.txtnombrecliente.Size = new System.Drawing.Size(218, 21);
             this.txtnombrecliente.TabIndex = 86;
             // 
@@ -454,58 +508,6 @@
             this.label7.Size = new System.Drawing.Size(38, 13);
             this.label7.TabIndex = 100;
             this.label7.Text = "Stock:";
-            // 
-            // IdEquipo
-            // 
-            this.IdEquipo.HeaderText = "IdEquipo";
-            this.IdEquipo.MinimumWidth = 6;
-            this.IdEquipo.Name = "IdEquipo";
-            this.IdEquipo.ReadOnly = true;
-            this.IdEquipo.Visible = false;
-            this.IdEquipo.Width = 150;
-            // 
-            // Equipo
-            // 
-            this.Equipo.HeaderText = "Equipo";
-            this.Equipo.MinimumWidth = 6;
-            this.Equipo.Name = "Equipo";
-            this.Equipo.ReadOnly = true;
-            this.Equipo.Width = 125;
-            // 
-            // Cantidad
-            // 
-            this.Cantidad.HeaderText = "Cantidad";
-            this.Cantidad.MaxInputLength = 10;
-            this.Cantidad.MinimumWidth = 6;
-            this.Cantidad.Name = "Cantidad";
-            this.Cantidad.ReadOnly = true;
-            this.Cantidad.Width = 125;
-            // 
-            // NumeroSerial
-            // 
-            this.NumeroSerial.HeaderText = "Numero Serial";
-            this.NumeroSerial.MinimumWidth = 6;
-            this.NumeroSerial.Name = "NumeroSerial";
-            this.NumeroSerial.ReadOnly = true;
-            this.NumeroSerial.Width = 200;
-            // 
-            // Caja
-            // 
-            this.Caja.HeaderText = "Caja";
-            this.Caja.MinimumWidth = 6;
-            this.Caja.Name = "Caja";
-            this.Caja.ReadOnly = true;
-            this.Caja.Width = 125;
-            // 
-            // btneliminar
-            // 
-            this.btneliminar.HeaderText = "";
-            this.btneliminar.MinimumWidth = 6;
-            this.btneliminar.Name = "btneliminar";
-            this.btneliminar.ReadOnly = true;
-            this.btneliminar.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            this.btneliminar.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
-            this.btneliminar.Width = 35;
             // 
             // frmacta
             // 

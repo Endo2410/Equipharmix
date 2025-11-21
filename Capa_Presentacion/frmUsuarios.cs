@@ -74,6 +74,13 @@ namespace CapaPresentacion
 
         private void frmUsuarios_Load(object sender, EventArgs e)
         {
+            // Obtiene los permisos del usuario logueado
+            List<Permiso> listaPermisos = new CN_Permiso().Listar(Inicio.usuarioActual.IdUsuario);
+
+            // Controla visibilidad de los botones según permisos
+            btnguardar.Visible = UtilPermisos.TienePermisoAccion(listaPermisos, "submenuusuarios", "btnguardar");
+            btnlimpiar.Visible = UtilPermisos.TienePermisoAccion(listaPermisos, "submenuusuarios", "btnlimpiar");
+
             txtdocumento.MaxLength = 40;
             txtnombrecompleto.MaxLength = 40;
             txtnombreusuario.MaxLength = 30;
@@ -178,12 +185,14 @@ namespace CapaPresentacion
                         return;
                     }
 
+                    // ✅ Encriptar con salt
                     objusuario.Clave = Encriptacion.EncriptarContraseña(contraseña);
                 }
                 else
                 {
                     objusuario.Clave = txtclave.Text;
                 }
+
 
                 // Registrar o editar
                 if (objusuario.IdUsuario == 0)
@@ -193,12 +202,12 @@ namespace CapaPresentacion
                     if (idusuariogenerado != 0)
                     {
                         dgvdata.Rows.Add(new object[] {
-                    "", idusuariogenerado, txtdocumento.Text, txtnombrecompleto.Text,txtnombreusuario.Text, txtcorreo.Text, objusuario.Clave,
-                    ((OpcionCombo)cborol.SelectedItem).Valor.ToString(),
-                    ((OpcionCombo)cborol.SelectedItem).Texto.ToString(),
-                    ((OpcionCombo)cboestado.SelectedItem).Valor.ToString(),
-                    ((OpcionCombo)cboestado.SelectedItem).Texto.ToString()
-                });
+                            "", idusuariogenerado, txtdocumento.Text, txtnombrecompleto.Text,txtnombreusuario.Text, txtcorreo.Text, objusuario.Clave,
+                            ((OpcionCombo)cborol.SelectedItem).Valor.ToString(),
+                            ((OpcionCombo)cborol.SelectedItem).Texto.ToString(),
+                            ((OpcionCombo)cboestado.SelectedItem).Valor.ToString(),
+                            ((OpcionCombo)cboestado.SelectedItem).Texto.ToString()
+                        });
 
                         Limpiar();
                     }

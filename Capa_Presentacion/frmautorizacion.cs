@@ -60,6 +60,15 @@ namespace CapaPresentacion
 
         private void frmautorizacion_Load(object sender, EventArgs e)
         {
+            // Obtiene los permisos del usuario logueado
+            List<Permiso> listaPermisos = new CN_Permiso().Listar(Inicio.usuarioActual.IdUsuario);
+
+            // Controla visibilidad de los botones según permisos
+            btnguardar.Visible = UtilPermisos.TienePermisoAccion(listaPermisos, "submenuautorizacionbaja", "btnguardar");
+            btnlimpiar.Visible = UtilPermisos.TienePermisoAccion(listaPermisos, "submenuautorizacionbaja", "btnlimpiar");
+            btneliminar.Visible = UtilPermisos.TienePermisoAccion(listaPermisos, "submenuautorizacionbaja", "btneliminar");
+
+
             try
             {
                 if (dgvdata.Columns.Count == 0)

@@ -18,7 +18,7 @@ namespace CapaDatos
 
             using (SqlConnection conexion = new SqlConnection(Conexion.cadena))
             {
-                using (SqlCommand cmd = new SqlCommand("usp_ObtenerCorrelativoPorFarmacia", conexion))
+                using (SqlCommand cmd = new SqlCommand("SP_OBTENER_CORRELATIVO_POR_FARMACIA", conexion))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("@IdFarmacia", idFarmacia);
@@ -45,80 +45,32 @@ namespace CapaDatos
             return $"{codigoFarmacia}-{correlativo.ToString("D5")}";
         }
 
-        public int ObtenerIdFarmaciaPorCodigo(string codigo)
-        {
-            int idFarmacia = 0;
-
-            using (SqlConnection conexion = new SqlConnection(Conexion.cadena))
-            {
-                using (SqlCommand cmd = new SqlCommand("SELECT IdFarmacia FROM FARMACIA WHERE Codigo = @codigo", conexion))
-                {
-                    cmd.Parameters.AddWithValue("@codigo", codigo);
-                    conexion.Open();
-
-                    object result = cmd.ExecuteScalar();
-                    if (result != null)
-                        idFarmacia = Convert.ToInt32(result);
-                }
-            }
-
-            return idFarmacia;
-        }
-
         public bool RestarStock(int idEquipo, int cantidad)
         {
-            bool respuesta = true;
-
             using (SqlConnection oconexion = new SqlConnection(Conexion.cadena))
             {
-                try
-                {
-                    StringBuilder query = new StringBuilder();
-                    query.AppendLine("update EQUIPO set stock = stock - @cantidad where idEquipo = @idEquipo");
+                SqlCommand cmd = new SqlCommand("SP_RESTAR_STOCK", oconexion);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@IdEquipo", idEquipo);
+                cmd.Parameters.AddWithValue("@Cantidad", cantidad);
 
-                    SqlCommand cmd = new SqlCommand(query.ToString(), oconexion);
-                    cmd.Parameters.AddWithValue("@cantidad", cantidad);
-                    cmd.Parameters.AddWithValue("@idEquipo", idEquipo);
-                    cmd.CommandType = CommandType.Text;
-                    oconexion.Open();
-
-                    respuesta = cmd.ExecuteNonQuery() > 0 ? true : false;
-                }
-                catch (Exception ex)
-                {
-                    respuesta = false;
-                }
+                oconexion.Open();
+                return cmd.ExecuteNonQuery() > 0;
             }
-            return respuesta;
-
         }
-
 
         public bool SumarStock(int idEquipo, int cantidad)
         {
-            bool respuesta = true;
-
             using (SqlConnection oconexion = new SqlConnection(Conexion.cadena))
             {
-                try
-                {
-                    StringBuilder query = new StringBuilder();
-                    query.AppendLine("update EQUIPO set stock = stock + @cantidad where idEquipo = @idEquipo");
-                    SqlCommand cmd = new SqlCommand(query.ToString(), oconexion);
-                    cmd.Parameters.AddWithValue("@cantidad", cantidad);
-                    cmd.Parameters.AddWithValue("@idEquipo", idEquipo);
-                    cmd.CommandType = CommandType.Text;
-                    oconexion.Open();
+                SqlCommand cmd = new SqlCommand("SP_SUMAR_STOCK", oconexion);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@IdEquipo", idEquipo);
+                cmd.Parameters.AddWithValue("@Cantidad", cantidad);
 
-                    respuesta = cmd.ExecuteNonQuery() > 0 ? true : false;
-                }
-                catch (Exception ex)
-                {
-                    respuesta = false;
-                }
+                oconexion.Open();
+                return cmd.ExecuteNonQuery() > 0;
             }
-            return respuesta;
-
         }
 
 
@@ -131,7 +83,7 @@ namespace CapaDatos
             {
                 using (SqlConnection oconexion = new SqlConnection(Conexion.cadena))
                 {
-                    SqlCommand cmd = new SqlCommand("usp_RegistrarActa", oconexion);
+                    SqlCommand cmd = new SqlCommand("SP_REGISTRAR_ACTA", oconexion);
                     cmd.CommandType = CommandType.StoredProcedure;
 
                     // Parámetros normales
@@ -173,7 +125,7 @@ namespace CapaDatos
             using (SqlConnection conexion = new SqlConnection(Conexion.cadena))
             {
                 conexion.Open();
-                using (SqlCommand cmd = new SqlCommand("usp_ObtenerActaPorNumeroDocumento", conexion))
+                using (SqlCommand cmd = new SqlCommand("SP_OBTENER_ACTA_POR_NUMERO_DOCUMENTO", conexion))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("@NumeroDocumento", numeroDocumento);
@@ -247,7 +199,7 @@ namespace CapaDatos
                 {
                     conexion.Open();
 
-                    using (SqlCommand cmd = new SqlCommand("usp_ObtenerEquiposPorFarmacia", conexion))
+                    using (SqlCommand cmd = new SqlCommand("SP_OBTENER_EQUIPOS_POR_FARMACIA", conexion))
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.AddWithValue("@CodigoFarmacia", codigoFarmacia);
@@ -368,7 +320,7 @@ namespace CapaDatos
                 try
                 {
                     conexion.Open();
-                    SqlCommand cmd = new SqlCommand("usp_ObtenerEquiposPendientesPorFarmacia", conexion);
+                    SqlCommand cmd = new SqlCommand("SP_OBTENER_EQUIPOS_PENDIENTES_POR_FARMACIA", conexion);
                     cmd.CommandType = CommandType.StoredProcedure;
 
                     using (SqlDataReader dr = cmd.ExecuteReader())
@@ -430,7 +382,7 @@ namespace CapaDatos
                 try
                 {
                     conexion.Open();
-                    SqlCommand cmd = new SqlCommand("usp_ObtenerEquiposEnEspera", conexion);
+                    SqlCommand cmd = new SqlCommand("SP_OBTENER_EQUIPOS_EN_ESPERA", conexion);
                     cmd.CommandType = CommandType.StoredProcedure;
 
                     using (SqlDataReader dr = cmd.ExecuteReader())
@@ -517,48 +469,41 @@ namespace CapaDatos
             bool resultado = false;
             mensaje = "";
 
-            using (SqlConnection conexion = new SqlConnection(Conexion.cadena))
+            using (SqlConnection cn = new SqlConnection(Conexion.cadena))
+            using (SqlCommand cmd = new SqlCommand("SP_AUTORIZAR_EQUIPO_PENDIENTE", cn))
             {
+                cmd.CommandType = CommandType.StoredProcedure;
+
+                cmd.Parameters.AddWithValue("@NumeroDocumento", numeroDocumento);
+                cmd.Parameters.AddWithValue("@CodigoEquipo", codigoEquipo);
+                cmd.Parameters.AddWithValue("@NumeroSerial", numeroSerial);
+                cmd.Parameters.AddWithValue("@IdUsuario", idUsuario);
+
+                SqlParameter paramResultado = new SqlParameter("@Resultado", SqlDbType.Bit) { Direction = ParameterDirection.Output };
+                SqlParameter paramMensaje = new SqlParameter("@Mensaje", SqlDbType.VarChar, 500) { Direction = ParameterDirection.Output };
+
+                cmd.Parameters.Add(paramResultado);
+                cmd.Parameters.Add(paramMensaje);
+
                 try
                 {
-                    SqlCommand cmd = new SqlCommand("usp_AutorizarEquipoPendiente", conexion);
-                    cmd.CommandType = CommandType.StoredProcedure;
-
-                    cmd.Parameters.AddWithValue("@NumeroDocumento", numeroDocumento);
-                    cmd.Parameters.AddWithValue("@CodigoEquipo", codigoEquipo);
-                    cmd.Parameters.AddWithValue("@NumeroSerial", numeroSerial);
-                    cmd.Parameters.AddWithValue("@IdUsuario", idUsuario);
-
-                    SqlParameter resultadoParam = new SqlParameter("@Resultado", SqlDbType.Bit)
-                    {
-                        Direction = ParameterDirection.Output
-                    };
-
-                    SqlParameter mensajeParam = new SqlParameter("@Mensaje", SqlDbType.VarChar, 500)
-                    {
-                        Direction = ParameterDirection.Output
-                    };
-
-                    cmd.Parameters.Add(resultadoParam);
-                    cmd.Parameters.Add(mensajeParam);
-
-                    conexion.Open();
+                    cn.Open();
                     cmd.ExecuteNonQuery();
 
-                    resultado = Convert.ToBoolean(resultadoParam.Value);
-                    mensaje = mensajeParam.Value.ToString();
+                    resultado = Convert.ToBoolean(paramResultado.Value);
+                    mensaje = paramMensaje.Value.ToString();
                 }
                 catch (Exception ex)
                 {
                     resultado = false;
-                    mensaje = "Error al autorizar: " + ex.Message;
+                    mensaje = "Error al autorizar equipo: " + ex.Message;
                 }
             }
 
             return resultado;
         }
 
-       
+
         public bool EliminarEquipoDeActa(string numeroDocumento, string codigoEquipo, string numeroSerial, out string mensaje)
         {
             bool resultado = false;
@@ -568,7 +513,7 @@ namespace CapaDatos
             {
                 try
                 {
-                    SqlCommand cmd = new SqlCommand("usp_EliminarEquipoDeActa", conexion);
+                    SqlCommand cmd = new SqlCommand("SP_ELIMINAR_EQUIPO_DE_ACTA", conexion);
                     cmd.CommandType = CommandType.StoredProcedure;
 
                     cmd.Parameters.AddWithValue("@NumeroDocumento", numeroDocumento);
@@ -600,22 +545,19 @@ namespace CapaDatos
 
 
 
-        public List<Detalle_Acta> ObtenerDetalleActa(int idActa) {
+        public List<Detalle_Acta> ObtenerDetalleActa(int idActa)
+        {
             List<Detalle_Acta> oLista = new List<Detalle_Acta>();
 
-            using (SqlConnection conexion = new SqlConnection(Conexion.cadena)) {
+            using (SqlConnection conexion = new SqlConnection(Conexion.cadena))
+            {
                 try
                 {
+                    SqlCommand cmd = new SqlCommand("SP_OBTENER_DETALLE_ACTA", conexion);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@IdActa", idActa);
+
                     conexion.Open();
-                    StringBuilder query = new StringBuilder();
-                    query.AppendLine("select p.Nombre,dv.Cantidad,dv.numeroSerial,dv.Caja from DETALLE_ACTA dv");
-                    query.AppendLine("inner join EQUIPO p on p.IdEquipo = dv.IdEquipo");
-                    query.AppendLine(" where dv.IdActa = @idActa");
-
-                    SqlCommand cmd = new SqlCommand(query.ToString(), conexion);
-                    cmd.Parameters.AddWithValue("@idActa", idActa);
-                    cmd.CommandType = System.Data.CommandType.Text;
-
 
                     using (SqlDataReader dr = cmd.ExecuteReader())
                     {
@@ -624,18 +566,19 @@ namespace CapaDatos
                             oLista.Add(new Detalle_Acta()
                             {
                                 oEquipo = new Equipo() { Nombre = dr["Nombre"].ToString() },
-                                Cantidad = Convert.ToInt32(dr["Cantidad"].ToString()),
+                                Cantidad = Convert.ToInt32(dr["Cantidad"]),
                                 NumeroSerial = dr["NumeroSerial"].ToString(),
                                 Caja = dr["Caja"].ToString(),
                             });
                         }
                     }
-
                 }
-                catch {
+                catch
+                {
                     oLista = new List<Detalle_Acta>();
                 }
             }
+
             return oLista;
         }
 
@@ -649,7 +592,7 @@ namespace CapaDatos
                 {
                     try
                     {
-                        SqlCommand cmd = new SqlCommand("usp_ObtenerEquiposAutorizados", conexion);
+                        SqlCommand cmd = new SqlCommand("SP_OBTENER_EQUIPOS_AUTORIZADOS", conexion);
                         cmd.CommandType = CommandType.StoredProcedure;
                         conexion.Open();
 
@@ -703,7 +646,7 @@ namespace CapaDatos
             {
                 try
                 {
-                    SqlCommand cmd = new SqlCommand("usp_EliminarEquipoAutorizado", conexion);
+                    SqlCommand cmd = new SqlCommand("SP_ELIMINAR_EQUIPO_AUTORIZADO", conexion);
                     cmd.CommandType = CommandType.StoredProcedure;
 
                     cmd.Parameters.AddWithValue("@NumeroDocumento", numeroDocumento);

@@ -37,6 +37,13 @@
             this.label11 = new System.Windows.Forms.Label();
             this.dgvdata = new System.Windows.Forms.DataGridView();
             this.label10 = new System.Windows.Forms.Label();
+            this.btnseleccionar = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.TipoMovimiento = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.NumeroDocumento = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.FechaRegistro = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.NombreFarmacia = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.EstadoAutorizacion = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.CreadorActa = new System.Windows.Forms.DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.dgvdata)).BeginInit();
             this.SuspendLayout();
             // 
@@ -117,6 +124,14 @@
             dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
             this.dgvdata.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.dgvdata.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgvdata.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.btnseleccionar,
+            this.TipoMovimiento,
+            this.NumeroDocumento,
+            this.FechaRegistro,
+            this.NombreFarmacia,
+            this.EstadoAutorizacion,
+            this.CreadorActa});
             this.dgvdata.Location = new System.Drawing.Point(279, 120);
             this.dgvdata.MultiSelect = false;
             this.dgvdata.Name = "dgvdata";
@@ -128,7 +143,8 @@
             this.dgvdata.RowTemplate.Height = 28;
             this.dgvdata.Size = new System.Drawing.Size(1209, 635);
             this.dgvdata.TabIndex = 180;
-            this.dgvdata.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvdata_CellContentClick);
+            this.dgvdata.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvdata_CellClick);
+            this.dgvdata.CellPainting += new System.Windows.Forms.DataGridViewCellPaintingEventHandler(this.dgvdata_CellPainting);
             // 
             // label10
             // 
@@ -142,6 +158,54 @@
             this.label10.TabIndex = 181;
             this.label10.Text = "Lista de solicitud de acta:";
             this.label10.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // btnseleccionar
+            // 
+            this.btnseleccionar.HeaderText = "";
+            this.btnseleccionar.Name = "btnseleccionar";
+            this.btnseleccionar.ReadOnly = true;
+            // 
+            // TipoMovimiento
+            // 
+            this.TipoMovimiento.HeaderText = "Tipo Movimiento";
+            this.TipoMovimiento.Name = "TipoMovimiento";
+            this.TipoMovimiento.ReadOnly = true;
+            this.TipoMovimiento.Width = 200;
+            // 
+            // NumeroDocumento
+            // 
+            this.NumeroDocumento.HeaderText = "Documento";
+            this.NumeroDocumento.Name = "NumeroDocumento";
+            this.NumeroDocumento.ReadOnly = true;
+            this.NumeroDocumento.Width = 170;
+            // 
+            // FechaRegistro
+            // 
+            this.FechaRegistro.HeaderText = "Fecha";
+            this.FechaRegistro.Name = "FechaRegistro";
+            this.FechaRegistro.ReadOnly = true;
+            this.FechaRegistro.Width = 150;
+            // 
+            // NombreFarmacia
+            // 
+            this.NombreFarmacia.HeaderText = "Farmacia";
+            this.NombreFarmacia.Name = "NombreFarmacia";
+            this.NombreFarmacia.ReadOnly = true;
+            this.NombreFarmacia.Width = 250;
+            // 
+            // EstadoAutorizacion
+            // 
+            this.EstadoAutorizacion.HeaderText = "Autorización";
+            this.EstadoAutorizacion.Name = "EstadoAutorizacion";
+            this.EstadoAutorizacion.ReadOnly = true;
+            this.EstadoAutorizacion.Width = 110;
+            // 
+            // CreadorActa
+            // 
+            this.CreadorActa.HeaderText = "Usuario Solicitante";
+            this.CreadorActa.Name = "CreadorActa";
+            this.CreadorActa.ReadOnly = true;
+            this.CreadorActa.Width = 175;
             // 
             // frmactaautorizacion
             // 
@@ -174,5 +238,12 @@
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.DataGridView dgvdata;
         private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.DataGridViewTextBoxColumn btnseleccionar;
+        private System.Windows.Forms.DataGridViewTextBoxColumn TipoMovimiento;
+        private System.Windows.Forms.DataGridViewTextBoxColumn NumeroDocumento;
+        private System.Windows.Forms.DataGridViewTextBoxColumn FechaRegistro;
+        private System.Windows.Forms.DataGridViewTextBoxColumn NombreFarmacia;
+        private System.Windows.Forms.DataGridViewTextBoxColumn EstadoAutorizacion;
+        private System.Windows.Forms.DataGridViewTextBoxColumn CreadorActa;
     }
 }

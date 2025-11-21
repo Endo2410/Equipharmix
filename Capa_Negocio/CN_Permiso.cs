@@ -19,5 +19,16 @@ namespace CapaNegocio
         {
             return objcd_permiso.Listar(IdUsuario);
         }
+
+        public List<Permiso> ListarPorRol(int idRol)
+        {
+            return objcd_permiso.ListarPorRol(idRol);
+        }
+
+        // Guardar o actualizar permisos de un rol
+        public bool GuardarPermisos(int idRol, List<Permiso> listaPermisos)
+        {
+            return objcd_permiso.GuardarPermisos(idRol, listaPermisos);
+        }
     }
 }

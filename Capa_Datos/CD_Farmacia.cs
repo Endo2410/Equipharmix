@@ -1,4 +1,5 @@
 ﻿using CapaEntidad;
+using CapaPresentacion.Utilidades;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -18,15 +19,13 @@ namespace CapaDatos
 
             using (SqlConnection oconexion = new SqlConnection(Conexion.cadena))
             {
-
                 try
                 {
+                    SqlCommand cmd = new SqlCommand("SP_LISTAR_FARMACIA", oconexion);
+                    cmd.CommandType = CommandType.StoredProcedure;
 
-                    StringBuilder query = new StringBuilder();
-                    query.AppendLine("select IdFarmacia,Codigo,Nombre,Telefono,Estado from FARMACIA");
-                    SqlCommand cmd = new SqlCommand(query.ToString(), oconexion);
-                    cmd.CommandType = CommandType.Text;
                     oconexion.Open();
+
                     using (SqlDataReader dr = cmd.ExecuteReader())
                     {
                         while (dr.Read())
@@ -36,19 +35,41 @@ namespace CapaDatos
                                 IdFarmacia = Convert.ToInt32(dr["IdFarmacia"]),
                                 Codigo = dr["Codigo"].ToString(),
                                 Nombre = dr["Nombre"].ToString(),
+                                Correo = dr["Correo"].ToString(),
                                 Telefono = dr["Telefono"].ToString(),
-                                Estado = Convert.ToBoolean(dr["Estado"]),
+                                Estado = Convert.ToBoolean(dr["Estado"])
                             });
                         }
                     }
                 }
-                catch (Exception ex)
+                catch
                 {
                     lista = new List<Farmacia>();
                 }
             }
+
             return lista;
         }
+
+        public int ObtenerIdFarmaciaPorCodigo(string codigo)
+        {
+            int idFarmacia = 0;
+
+            using (SqlConnection conexion = new SqlConnection(Conexion.cadena))
+            {
+                SqlCommand cmd = new SqlCommand("SP_OBTENER_ID_FARMACIA", conexion);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@Codigo", codigo);
+
+                conexion.Open();
+                object result = cmd.ExecuteScalar();
+                if (result != null)
+                    idFarmacia = Convert.ToInt32(result);
+            }
+
+            return idFarmacia;
+        }
+
 
         //Registrar Farmacia
 
@@ -61,17 +82,25 @@ namespace CapaDatos
 
                 using (SqlConnection oconexion = new SqlConnection(Conexion.cadena))
                 {
+                    oconexion.Open();
 
-                    SqlCommand cmd = new SqlCommand("sp_RegistrarFarmacia", oconexion);
+                    // Guardar usuario logueado en SESSION_CONTEXT
+                    using (SqlCommand cmdt = new SqlCommand("EXEC sp_set_session_context @key, @value", oconexion))
+                    {
+                        cmdt.Parameters.AddWithValue("@key", "Usuario");
+                        cmdt.Parameters.AddWithValue("@value", UsuarioSesion.NombreCompleto);
+                        cmdt.ExecuteNonQuery();
+                    }
+
+                    SqlCommand cmd = new SqlCommand("SP_REGISTRAR_FARMACIA", oconexion);
                     cmd.Parameters.AddWithValue("Codigo", obj.Codigo);
                     cmd.Parameters.AddWithValue("Nombre", obj.Nombre);
+                    cmd.Parameters.AddWithValue("Correo", obj.Correo);
                     cmd.Parameters.AddWithValue("Telefono", obj.Telefono);
                     cmd.Parameters.AddWithValue("Estado", obj.Estado);
                     cmd.Parameters.Add("Resultado", SqlDbType.Int).Direction = ParameterDirection.Output;
                     cmd.Parameters.Add("Mensaje", SqlDbType.VarChar, 500).Direction = ParameterDirection.Output;
                     cmd.CommandType = CommandType.StoredProcedure;
-
-                    oconexion.Open();
 
                     cmd.ExecuteNonQuery();
 
@@ -99,18 +128,27 @@ namespace CapaDatos
 
                 using (SqlConnection oconexion = new SqlConnection(Conexion.cadena))
                 {
+                    oconexion.Open();
 
-                    SqlCommand cmd = new SqlCommand("sp_ModificarFarmacia", oconexion);
+                    // Guardar usuario logueado en SESSION_CONTEXT
+                    using (SqlCommand cmdt = new SqlCommand("EXEC sp_set_session_context @key, @value", oconexion))
+                    {
+                        cmdt.Parameters.AddWithValue("@key", "Usuario");
+                        cmdt.Parameters.AddWithValue("@value", UsuarioSesion.NombreCompleto);
+                        cmdt.ExecuteNonQuery();
+                    }
+
+
+                    SqlCommand cmd = new SqlCommand("SP_MODIFICAR_FARMACIA", oconexion);
                     cmd.Parameters.AddWithValue("IdFarmacia", obj.IdFarmacia);
                     cmd.Parameters.AddWithValue("Codigo", obj.Codigo);
                     cmd.Parameters.AddWithValue("Nombre", obj.Nombre);
+                    cmd.Parameters.AddWithValue("Correo", obj.Correo);
                     cmd.Parameters.AddWithValue("Telefono", obj.Telefono);
                     cmd.Parameters.AddWithValue("Estado", obj.Estado);
                     cmd.Parameters.Add("Resultado", SqlDbType.Int).Direction = ParameterDirection.Output;
                     cmd.Parameters.Add("Mensaje", SqlDbType.VarChar, 500).Direction = ParameterDirection.Output;
                     cmd.CommandType = CommandType.StoredProcedure;
-
-                    oconexion.Open();
 
                     cmd.ExecuteNonQuery();
 
@@ -124,6 +162,40 @@ namespace CapaDatos
                 Mensaje = ex.Message;
             }
             return respuesta;
+        }
+
+        public List<Farmacia> ReporteFarmacia(string fechainicio, string fechafin)
+        {
+            List<Farmacia> lista = new List<Farmacia>();
+
+            using (SqlConnection oConexion = new SqlConnection(Conexion.cadena))
+            {
+                SqlCommand cmd = new SqlCommand("SP_OBTENER_REPORTE_FARMACIA", oConexion);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@FechaInicio", fechainicio);
+                cmd.Parameters.AddWithValue("@FechaFin", fechafin);
+
+                oConexion.Open();
+
+                using (SqlDataReader dr = cmd.ExecuteReader())
+                {
+                    while (dr.Read())
+                    {
+                        lista.Add(new Farmacia
+                        {
+                            IdFarmacia = Convert.ToInt32(dr["IdFarmacia"]),
+                            Codigo = dr["Codigo"].ToString(),
+                            Nombre = dr["Nombre"].ToString(),
+                            Telefono = dr["Telefono"].ToString(),
+                            Correo = dr["Correo"].ToString(),
+                            Estado = Convert.ToBoolean(dr["Estado"]),
+                            FechaRegistro = Convert.ToDateTime(dr["FechaRegistro"])
+                        });
+                    }
+                }
+            }
+
+            return lista;
         }
     }
 }

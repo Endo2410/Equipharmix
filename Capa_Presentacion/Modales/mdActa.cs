@@ -18,12 +18,6 @@ namespace CapaPresentacion.Modales
         private int idUsuario;
         private CN_Acta objCN_Acta = new CN_Acta();
 
-        private DataGridView dgvEquipos;
-        private Button btnAutorizar;
-        private Button btnCancelar;
-        private Button btnRechazar;
-        private CheckBox chkSeleccionarTodo;
-
         public mdActa(string numeroDocumento, int idUsuario)
         {
             this.numeroDocumento = numeroDocumento;
@@ -35,182 +29,86 @@ namespace CapaPresentacion.Modales
 
         private void mdActa_Load(object sender, EventArgs e)
         {
-            this.Text = "Autorizar Equipos";
-            this.Size = new Size(1000, 500);
-            this.StartPosition = FormStartPosition.CenterParent;
 
-            dgvEquipos = new DataGridView
-            {
-                Dock = DockStyle.Top,
-                Height = 360,
-                AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
-                AllowUserToAddRows = false,
-                SelectionMode = DataGridViewSelectionMode.FullRowSelect
-            };
+            //  alinear el CheckBox al centro
+            dgvEquipo.Columns["chk"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
 
-            dgvEquipos.Columns.Add(new DataGridViewCheckBoxColumn() { Name = "chk", HeaderText = "" });
-            dgvEquipos.Columns.Add("CodigoEquipo", "Código");
-            dgvEquipos.Columns.Add("NombreEquipo", "Equipo");
-            dgvEquipos.Columns.Add("Marca", "Marca");
-            dgvEquipos.Columns.Add("Estado", "Estado");
-            dgvEquipos.Columns.Add("Cantidad", "Cantidad");
-            dgvEquipos.Columns.Add("NumeroSerial", "N° Serial");
-            dgvEquipos.Columns.Add("Caja", "Caja");
-
-            chkSeleccionarTodo = new CheckBox
-            {
-                Text = "Seleccionar todos",
-                Left = 20,
-                Top = dgvEquipos.Bottom + 10,
-                AutoSize = true
-            };
-            chkSeleccionarTodo.CheckedChanged += ChkSeleccionarTodo_CheckedChanged;
-
-            // Botón Autorizar (primero a la izquierda)
-            btnAutorizar = new Button
-            {
-                Text = "✔ Autorizar",
-                Width = 160,
-                Height = 45,
-                Font = new Font("Segoe UI", 10, FontStyle.Bold),
-                Left = 20,
-                Top = chkSeleccionarTodo.Bottom + 15,
-                BackColor = Color.FromArgb(0, 153, 76),
-                ForeColor = Color.White,
-                FlatStyle = FlatStyle.Flat
-            };
-            btnAutorizar.FlatAppearance.BorderSize = 0;
-            btnAutorizar.Click += BtnAutorizar_Click;
-
-            // Botón Rechazar (a la derecha de Autorizar)
-            btnRechazar = new Button
-            {
-                Text = "⛔ Rechazar Acta",
-                Width = 170,
-                Height = 45,
-                Font = new Font("Segoe UI", 10, FontStyle.Bold),
-                Left = btnAutorizar.Right + 15,
-                Top = btnAutorizar.Top,
-                BackColor = Color.FromArgb(220, 53, 69),
-                ForeColor = Color.White,
-                FlatStyle = FlatStyle.Flat
-            };
-            btnRechazar.FlatAppearance.BorderSize = 0;
-            btnRechazar.Click += BtnRechazar_Click;
-
-            // Botón Cancelar (a la derecha de Rechazar)
-            btnCancelar = new Button
-            {
-                Text = "Cancelar",
-                Width = 120,
-                Height = 45,
-                Font = new Font("Segoe UI", 10, FontStyle.Bold),
-                Left = btnRechazar.Right + 15,
-                Top = btnAutorizar.Top,
-                BackColor = Color.LightGray,
-                ForeColor = Color.Black,
-                FlatStyle = FlatStyle.Flat
-            };
-            btnCancelar.FlatAppearance.BorderSize = 0;
-            btnCancelar.Click += BtnCancelar_Click;
-
-            this.Controls.Add(dgvEquipos);
-            this.Controls.Add(chkSeleccionarTodo);
-            this.Controls.Add(btnAutorizar);
-            this.Controls.Add(btnRechazar);
-            this.Controls.Add(btnCancelar);
 
             CargarEquiposDelDocumento();
         }
 
         private void CargarEquiposDelDocumento()
         {
-            dgvEquipos.Rows.Clear();
+            dgvEquipo.Rows.Clear();
 
-            chkSeleccionarTodo.CheckedChanged -= ChkSeleccionarTodo_CheckedChanged;
-            chkSeleccionarTodo.Checked = false;
-            chkSeleccionarTodo.CheckedChanged += ChkSeleccionarTodo_CheckedChanged;
+            // Lista combinada de Acta y Prestamo
+            List<dynamic> lista = new List<dynamic>();
 
-            List<Detalle_Acta> lista = objCN_Acta.ObtenerEquiposPorDocumento(numeroDocumento);
-            if (lista == null) lista = new List<Detalle_Acta>();
-
-            foreach (var item in lista)
+            try
             {
-                if (item.oEquipo == null || item.oEquipo.oMarca == null || item.oEquipo.oEstado == null)
-                    continue;
-
-                dgvEquipos.Rows.Add(
-                    false,
-                    item.oEquipo.Codigo ?? "",
-                    item.oEquipo.Nombre ?? "",
-                    item.oEquipo.oMarca.Descripcion ?? "",
-                    item.oEquipo.oEstado.Descripcion ?? "",
-                    item.Cantidad,
-                    item.NumeroSerial ?? "",
-                    item.Caja ?? ""
-                );
-            }
-        }
-
-        private void ChkSeleccionarTodo_CheckedChanged(object sender, EventArgs e)
-        {
-            foreach (DataGridViewRow row in dgvEquipos.Rows)
-            {
-                row.Cells["chk"].Value = chkSeleccionarTodo.Checked;
-            }
-
-            dgvEquipos.RefreshEdit();
-        }
-
-        private void BtnAutorizar_Click(object sender, EventArgs e)
-        {
-            DialogResult confirmacion = MessageBox.Show(
-                "¿Está seguro que desea autorizar los equipos seleccionados y eliminar los no seleccionados?",
-                "Confirmar Autorización",
-                MessageBoxButtons.YesNo,
-                MessageBoxIcon.Question
-            );
-
-            if (confirmacion != DialogResult.Yes)
-                return;
-
-            bool huboCambios = false;
-            string mensaje = "";
-
-            foreach (DataGridViewRow row in dgvEquipos.Rows)
-            {
-                bool estaSeleccionado = Convert.ToBoolean(row.Cells["chk"].Value);
-                string codigoEquipo = row.Cells["CodigoEquipo"].Value.ToString();
-                string numeroSerial = row.Cells["NumeroSerial"].Value.ToString();
-
-                if (estaSeleccionado)
+                // Traer equipos de acta si existen
+                List<Detalle_Acta> listaActa = objCN_Acta.ObtenerEquiposPorDocumento(numeroDocumento);
+                if (listaActa != null)
                 {
-                    objCN_Acta.AutorizarEquipoPendiente(numeroDocumento, codigoEquipo, numeroSerial, idUsuario, out mensaje);
-                    huboCambios = true;
+                    foreach (var item in listaActa)
+                        lista.Add(new { Movimiento = "Acta", Item = item });
                 }
-                else
+
+                // Traer equipos de préstamo si existen
+                CN_Prestamo objCN_Prestamo = new CN_Prestamo();
+                List<Detalle_Prestamo> listaPrestamo = objCN_Prestamo.ObtenerEquiposPorDocumento(numeroDocumento);
+                if (listaPrestamo != null)
                 {
-                    objCN_Acta.EliminarEquipoDeActa(numeroDocumento, codigoEquipo, numeroSerial, out mensaje);
-                    huboCambios = true;
+                    foreach (var item in listaPrestamo)
+                        lista.Add(new { Movimiento = "Prestamo", Item = item });
+                }
+
+                // Si todos los registros son préstamos, ocultar columna Caja
+                bool tieneActa = lista.Any(r => r.Movimiento == "Acta");
+                dgvEquipo.Columns["Caja"].Visible = tieneActa;
+
+                // Cargar filas en la grilla
+                foreach (var registro in lista)
+                {
+                    dynamic item = registro.Item;
+                    string tipo = registro.Movimiento;
+
+                    var equipo = item.oEquipo;
+                    var marca = equipo?.oMarca;
+                    var estado = equipo?.oEstado;
+
+                    if (equipo == null || marca == null || estado == null)
+                        continue;
+
+                    dgvEquipo.Rows.Add(
+                        false,
+                        equipo.Codigo ?? "",
+                        equipo.Nombre ?? "",
+                        marca.Descripcion ?? "",
+                        estado.Descripcion ?? "",
+                        item.Cantidad,
+                        item.NumeroSerial ?? "",
+                        tipo == "Acta" ? item.Caja ?? "" : "", // Solo asigna Caja si es Acta
+                        tipo  // <-- ESTA ES LA CLAVE
+                    );
                 }
             }
-
-            if (huboCambios)
+            catch (Exception ex)
             {
-                MessageBox.Show("Se procesaron los equipos correctamente.", "Confirmación", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                this.DialogResult = DialogResult.OK;
-            }
-            else
-            {
-                MessageBox.Show("No seleccionó ningún equipo.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Error al cargar detalles: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+ 
+        private void btnCancela_Click(object sender, EventArgs e)
+        {
+            this.DialogResult = DialogResult.Cancel;
+        }
 
-        private void BtnRechazar_Click(object sender, EventArgs e)
+        private void btnRechaza_Click(object sender, EventArgs e)
         {
             bool todosSeleccionados = true;
 
-            foreach (DataGridViewRow row in dgvEquipos.Rows)
+            foreach (DataGridViewRow row in dgvEquipo.Rows)
             {
                 bool estaSeleccionado = Convert.ToBoolean(row.Cells["chk"].Value);
                 if (!estaSeleccionado)
@@ -222,12 +120,13 @@ namespace CapaPresentacion.Modales
 
             if (!todosSeleccionados)
             {
-                MessageBox.Show("Debe seleccionar todos los equipos para poder rechazar el acta.", "Advertencia", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Debe seleccionar todos los equipos para poder rechazar el documento.",
+                    "Advertencia", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
             DialogResult confirmacion = MessageBox.Show(
-                "¿Está seguro que desea rechazar el acta? Se eliminarán todos los equipos.",
+                "¿Está seguro que desea rechazar? Se eliminarán todos los equipos.",
                 "Confirmar Rechazo",
                 MessageBoxButtons.YesNo,
                 MessageBoxIcon.Warning
@@ -238,20 +137,114 @@ namespace CapaPresentacion.Modales
 
             string mensaje = "";
 
-            foreach (DataGridViewRow row in dgvEquipos.Rows)
+            CN_Prestamo objCN_Prestamo = new CN_Prestamo();
+
+            foreach (DataGridViewRow row in dgvEquipo.Rows)
             {
                 string codigoEquipo = row.Cells["CodigoEquipo"].Value.ToString();
                 string numeroSerial = row.Cells["NumeroSerial"].Value.ToString();
-                objCN_Acta.EliminarEquipoDeActa(numeroDocumento, codigoEquipo, numeroSerial, out mensaje);
+                string movimiento = row.Cells["Movimiento"].Value.ToString(); // <-- Acta o Prestamo
+
+                if (movimiento == "Acta")
+                {
+                    objCN_Acta.EliminarEquipoDeActa(numeroDocumento, codigoEquipo, numeroSerial, out mensaje);
+                }
+                else // Prestamo
+                {
+                    objCN_Prestamo.EliminarEquipoPrestamo(numeroDocumento, codigoEquipo, numeroSerial, out mensaje);
+                }
             }
 
-            MessageBox.Show("El acta fue rechazada correctamente.", "Confirmación", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show("Documento rechazado correctamente.",
+                "Confirmación", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
             this.DialogResult = DialogResult.OK;
         }
 
-        private void BtnCancelar_Click(object sender, EventArgs e)
+        private void btnAutoriza_Click(object sender, EventArgs e)
         {
-            this.DialogResult = DialogResult.Cancel;
+            DialogResult confirmacion = MessageBox.Show(
+        "¿Está seguro que desea autorizar los equipos seleccionados y eliminar los no seleccionados?",
+        "Confirmar Autorización",
+        MessageBoxButtons.YesNo,
+        MessageBoxIcon.Question
+    );
+
+            if (confirmacion != DialogResult.Yes)
+                return;
+
+            bool huboCambios = false;
+            string mensaje = "";
+
+            CN_Prestamo objCN_Prestamo = new CN_Prestamo();
+
+            foreach (DataGridViewRow row in dgvEquipo.Rows)
+            {
+                bool estaSeleccionado = Convert.ToBoolean(row.Cells["chk"].Value);
+                string codigoEquipo = row.Cells["CodigoEquipo"].Value.ToString();
+                string numeroSerial = row.Cells["NumeroSerial"].Value.ToString();
+                string movimiento = row.Cells["Movimiento"].Value.ToString(); // Acta o Prestamo
+
+                if (estaSeleccionado)
+                {
+                    // AUTORIZAR
+                    if (movimiento == "Acta")
+                    {
+                        bool resultado = objCN_Acta.AutorizarEquipoPendiente(numeroDocumento, codigoEquipo, numeroSerial, idUsuario, out mensaje);
+                        if (!resultado)
+                        {
+                            MessageBox.Show($"Error al autorizar equipo {codigoEquipo} ({numeroSerial}): {mensaje}",
+                                            "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
+                    }
+                    else // Prestamo
+                    {
+                        bool resultado;
+                        objCN_Prestamo.AutorizarPrestamo(numeroDocumento, codigoEquipo, numeroSerial, idUsuario, out resultado, out mensaje);
+                        if (!resultado)
+                        {
+                            MessageBox.Show($"Error al autorizar equipo {codigoEquipo} ({numeroSerial}): {mensaje}",
+                                            "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
+                    }
+                }
+                else
+                {
+                    // ELIMINAR
+                    if (movimiento == "Acta")
+                    {
+                        objCN_Acta.EliminarEquipoDeActa(numeroDocumento, codigoEquipo, numeroSerial, out mensaje);
+                    }
+                    else // Prestamo
+                    {
+                        objCN_Prestamo.EliminarEquipoPrestamo(numeroDocumento, codigoEquipo, numeroSerial, out mensaje);
+                    }
+                }
+
+                huboCambios = true;
+            }
+
+            if (huboCambios)
+            {
+                MessageBox.Show("Se procesaron los equipos correctamente.",
+                    "Confirmación", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                this.DialogResult = DialogResult.OK;
+            }
+            else
+            {
+                MessageBox.Show("No seleccionó ningún equipo.",
+                    "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
+
+        private void chkSeleccionarTod_CheckedChanged(object sender, EventArgs e)
+        {
+            foreach (DataGridViewRow row in dgvEquipo.Rows)
+            {
+                row.Cells["chk"].Value = chkSeleccionarTod.Checked;
+            }
+
+            dgvEquipo.RefreshEdit();
         }
     }
 }

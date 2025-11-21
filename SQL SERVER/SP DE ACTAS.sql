@@ -14,7 +14,7 @@ GO
 
 /****************** PROCEDIMIENTO PARA OBTENER CORRELATIVO POR FARMACIA ******************/
 /* Obtiene el siguiente número correlativo para el documento de acta basado en el código de farmacia */
-CREATE PROCEDURE usp_ObtenerCorrelativoPorFarmacia
+CREATE PROCEDURE SP_OBTENER_CORRELATIVO_POR_FARMACIA
 (
     @IdFarmacia INT,
     @Correlativo INT OUTPUT
@@ -53,7 +53,7 @@ GO
 
 /****************** PROCEDIMIENTO PARA REGISTRAR UNA ACTA ******************/
 /* Inserta una nueva acta junto a sus detalles y valida existencia de farmacia y equipos */
-CREATE PROCEDURE usp_RegistrarActa
+CREATE PROCEDURE SP_REGISTRAR_ACTA
 (
     @IdUsuario INT,
     @TipoDocumento VARCHAR(500),
@@ -123,7 +123,7 @@ GO
 
 /****************** PROCEDIMIENTO PARA OBTENER ACTA POR NÚMERO DE DOCUMENTO ******************/
 /* Consulta detalles e info general del acta dada su clave NumeroDocumento */
-CREATE PROCEDURE usp_ObtenerActaPorNumeroDocumento
+CREATE PROCEDURE SP_OBTENER_ACTA_POR_NUMERO_DOCUMENTO
 (
     @NumeroDocumento VARCHAR(500)
 )
@@ -180,7 +180,7 @@ GO
 
 /****************** PROCEDIMIENTO PARA OBTENER EQUIPOS POR FARMACIA ******************/
 /* Devuelve las actas y detalles autorizados o rechazados (sin pendientes) para una farmacia */
-CREATE PROCEDURE usp_ObtenerEquiposPorFarmacia
+CREATE PROCEDURE SP_OBTENER_EQUIPOS_POR_FARMACIA
     @CodigoFarmacia VARCHAR(50)
 AS
 BEGIN
@@ -304,7 +304,7 @@ GO
 
 /****************** PROCEDIMIENTO PARA OBTENER EQUIPOS PENDIENTES POR FARMACIA ******************/
 /* Obtiene los equipos con estado pendiente para una farmacia (o todas si es NULL) */
-CREATE PROCEDURE usp_ObtenerEquiposPendientesPorFarmacia
+CREATE PROCEDURE SP_OBTENER_EQUIPOS_PENDIENTES_POR_FARMACIA
     @CodigoFarmacia VARCHAR(50) = NULL
 AS
 BEGIN
@@ -345,7 +345,7 @@ GO
 
 /****************** PROCEDIMIENTO PARA OBTENER EQUIPOS EN ESPERA ******************/
 /* Lista equipos marcados como "En espera" */
-CREATE PROCEDURE usp_ObtenerEquiposEnEspera
+CREATE PROCEDURE SP_OBTENER_EQUIPOS_EN_ESPERA
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -417,7 +417,7 @@ GO
 
 /****************** PROCEDIMIENTO PARA AUTORIZAR EQUIPO PENDIENTE ******************/
 /* Autoriza un equipo pendiente, valida stock y actualiza estado y stock */
-CREATE PROCEDURE usp_AutorizarEquipoPendiente
+ALTER PROCEDURE SP_AUTORIZAR_EQUIPO_PENDIENTE
 (
     @NumeroDocumento   VARCHAR(100),
     @CodigoEquipo      VARCHAR(100),
@@ -432,53 +432,41 @@ BEGIN
 
     BEGIN TRY
         DECLARE @IdEquipo INT;
-        DECLARE @StockActual INT;
+        DECLARE @IdDetalle INT;
+        DECLARE @IdActa INT;
 
         SET @Resultado = 1;
         SET @Mensaje = '';
 
-        -- Obtener IdEquipo
-        SELECT TOP 1 @IdEquipo = E.IdEquipo
-        FROM ACTA A
-        INNER JOIN DETALLE_ACTA DA ON DA.IdActa = A.IdActa
+        -- Obtener IdEquipo, IdDetalleActa e IdActa
+        SELECT TOP 1
+            @IdEquipo = E.IdEquipo,
+            @IdDetalle = DA.IdDetalleActa,
+            @IdActa = DA.IdActa
+        FROM DETALLE_ACTA DA
         INNER JOIN EQUIPO E ON E.IdEquipo = DA.IdEquipo
-        WHERE 
-            A.NumeroDocumento = @NumeroDocumento AND
-            E.Codigo = @CodigoEquipo AND
-            DA.NumeroSerial = @NumeroSerial;
+        INNER JOIN ACTA A ON A.IdActa = DA.IdActa
+        WHERE A.NumeroDocumento = @NumeroDocumento
+          AND E.Codigo = @CodigoEquipo
+          AND DA.NumeroSerial = @NumeroSerial;
 
-        -- Validar existencia
-        IF @IdEquipo IS NULL
+        IF @IdDetalle IS NULL
         BEGIN
             SET @Resultado = 0;
-            SET @Mensaje = 'No se encontró el equipo especificado.';
+            SET @Mensaje = 'No se encontró el equipo en el acta.';
             RETURN;
         END
 
-        -- Validar stock
-        SELECT @StockActual = Stock FROM EQUIPO WHERE IdEquipo = @IdEquipo;
+        -- Registrar usuario que autoriza en DETALLE_ACTA
+        UPDATE DETALLE_ACTA
+        SET IdUsuarioAutorizo = @IdUsuario,
+            FechaRegistro = GETDATE()
+        WHERE IdDetalleActa = @IdDetalle;
 
-        IF @StockActual <= 0
-        BEGIN
-            SET @Resultado = 0;
-            SET @Mensaje = 'No hay stock disponible para este equipo.';
-            RETURN;
-        END
-
-        -- Autorizar acta
-        UPDATE A
+        -- Actualizar estado de autorización en ACTA
+        UPDATE ACTA
         SET EstadoAutorizacion = 'AUTORIZADO'
-        FROM ACTA A
-        INNER JOIN DETALLE_ACTA DA ON DA.IdActa = A.IdActa
-        WHERE 
-            A.NumeroDocumento = @NumeroDocumento AND
-            DA.IdEquipo = @IdEquipo AND
-            DA.NumeroSerial = @NumeroSerial;
-
-        -- Descontar stock
-        UPDATE EQUIPO
-        SET Stock = Stock - 1
-        WHERE IdEquipo = @IdEquipo;
+        WHERE IdActa = @IdActa;
 
         SET @Mensaje = 'Equipo autorizado correctamente.';
 
@@ -491,71 +479,11 @@ END
 GO
 
 
-/****************** PROCEDIMIENTO PARA ELIMINAR EQUIPO DE ACTA ******************/
-/* Elimina un equipo específico de un acta y elimina acta si queda vacía */
-CREATE PROCEDURE usp_EliminarEquipoDeActa
-(
-    @NumeroDocumento   VARCHAR(100),
-    @CodigoEquipo      VARCHAR(100),
-    @NumeroSerial      VARCHAR(100),
-    @Resultado         BIT OUTPUT,
-    @Mensaje           VARCHAR(500) OUTPUT
-)
-AS
-BEGIN
-    SET NOCOUNT ON;
-
-    BEGIN TRY
-        DECLARE @IdActa INT;
-
-        SET @Resultado = 1;
-        SET @Mensaje = '';
-
-        -- Obtener IdActa relacionado
-        SELECT TOP 1 @IdActa = A.IdActa
-        FROM ACTA A
-        INNER JOIN DETALLE_ACTA DA ON A.IdActa = DA.IdActa
-        INNER JOIN EQUIPO E ON E.IdEquipo = DA.IdEquipo
-        WHERE 
-            A.NumeroDocumento = @NumeroDocumento AND
-            E.Codigo = @CodigoEquipo AND
-            DA.NumeroSerial = @NumeroSerial;
-
-        -- Validación de existencia
-        IF @IdActa IS NULL
-        BEGIN
-            SET @Resultado = 0;
-            SET @Mensaje = 'No se encontró el registro del equipo.';
-            RETURN;
-        END
-
-        -- Eliminar el detalle del acta
-        DELETE DA
-        FROM DETALLE_ACTA DA
-        INNER JOIN EQUIPO E ON E.IdEquipo = DA.IdEquipo
-        WHERE 
-            DA.IdActa = @IdActa AND
-            E.Codigo = @CodigoEquipo AND
-            DA.NumeroSerial = @NumeroSerial;
-
-        -- Si ya no quedan equipos en el acta, eliminar el acta
-        IF NOT EXISTS (SELECT 1 FROM DETALLE_ACTA WHERE IdActa = @IdActa)
-        BEGIN
-            DELETE FROM ACTA WHERE IdActa = @IdActa;
-        END
-
-    END TRY
-    BEGIN CATCH
-        SET @Resultado = 0;
-        SET @Mensaje = ERROR_MESSAGE();
-    END CATCH
-END
-GO
 
 
 /****************** PROCEDIMIENTO PARA OBTENER EQUIPOS AUTORIZADOS ******************/
 /* Obtiene los equipos con estado 'Autorizado' */
-CREATE PROCEDURE usp_ObtenerEquiposAutorizados
+CREATE PROCEDURE SP_OBTENER_EQUIPOS_AUTORIZADOS
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -591,7 +519,7 @@ GO
 /****************** PROCEDIMIENTO PARA ELIMINAR EQUIPO AUTORIZADO ******************/
 /* Elimina un equipo autorizado y elimina acta si queda vacía */
 
-CREATE PROCEDURE [dbo].[usp_EliminarEquipoAutorizado]
+CREATE PROCEDURE SP_ELIMINAR_EQUIPO_AUTORIZADO
     @NumeroDocumento VARCHAR(50),
     @CodigoEquipo VARCHAR(50),
     @NumeroSerial VARCHAR(100)

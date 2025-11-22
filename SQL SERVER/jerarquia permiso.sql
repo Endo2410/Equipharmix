@@ -39,7 +39,7 @@ CREATE TABLE PERMISO (
     FOREIGN KEY (IdAccion) REFERENCES ACCION(IdAccion)
 );
 
-
+select * from MODULO
 -- MODULOS
 INSERT INTO MODULO (NombreModulo) VALUES 
 ('menuseguridad'),
@@ -52,10 +52,14 @@ INSERT INTO MODULO (NombreModulo) VALUES
 ('menuasiganados'),
 ('menureportes'),
 ('menuacercade');
-select * from MODULO
+
+
 
 -- SUBMENUS
 INSERT INTO SUBMENU (IdModulo, NombreSubMenu) VALUES
+(8, 'submenureportefarmacia'),
+(8, 'submenureporteauditoria'),
+
 (10, 'submenuprestamo'),
 (10, 'submenudetalleprestamo'),
 
@@ -105,7 +109,7 @@ LEFT JOIN ACCION a ON a.IdAccion = p.IdAccion
 WHERE p.IdRol = @idRol;
 
 
-
 INSERT INTO PERMISO (IdRol, IdModulo, IdSubMenu, IdAccion) VALUES
 (1, 1, 2, 3) -- submenuroles sin acción
 
+select * from AUDITORIA

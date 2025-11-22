@@ -69,6 +69,8 @@
             this.menuprestamo = new FontAwesome.Sharp.IconMenuItem();
             this.submenuprestamo = new FontAwesome.Sharp.IconMenuItem();
             this.submenudetalleprestamo = new FontAwesome.Sharp.IconMenuItem();
+            this.submenureportefarmacia = new System.Windows.Forms.ToolStripMenuItem();
+            this.submenureporteauditoria = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.pb_cerrarsecion)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pb_minimizar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pb_maximizar)).BeginInit();
@@ -407,7 +409,9 @@
             this.menureportes.AutoSize = false;
             this.menureportes.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.submenureporteacta,
-            this.submenureporteregistrar});
+            this.submenureporteregistrar,
+            this.submenureportefarmacia,
+            this.submenureporteauditoria});
             this.menureportes.IconChar = FontAwesome.Sharp.IconChar.ChartBar;
             this.menureportes.IconColor = System.Drawing.Color.Black;
             this.menureportes.IconFont = FontAwesome.Sharp.IconFont.Auto;
@@ -421,14 +425,14 @@
             // submenureporteacta
             // 
             this.submenureporteacta.Name = "submenureporteacta";
-            this.submenureporteacta.Size = new System.Drawing.Size(177, 22);
+            this.submenureporteacta.Size = new System.Drawing.Size(180, 22);
             this.submenureporteacta.Text = "Reporte de Acta";
             this.submenureporteacta.Click += new System.EventHandler(this.submenureporteacta_Click);
             // 
             // submenureporteregistrar
             // 
             this.submenureporteregistrar.Name = "submenureporteregistrar";
-            this.submenureporteregistrar.Size = new System.Drawing.Size(177, 22);
+            this.submenureporteregistrar.Size = new System.Drawing.Size(180, 22);
             this.submenureporteregistrar.Text = "Reporte de Registro";
             this.submenureporteregistrar.Click += new System.EventHandler(this.submenureporteregistrar_Click);
             // 
@@ -534,7 +538,7 @@
             this.submenuprestamo.IconColor = System.Drawing.Color.Black;
             this.submenuprestamo.IconFont = FontAwesome.Sharp.IconFont.Auto;
             this.submenuprestamo.Name = "submenuprestamo";
-            this.submenuprestamo.Size = new System.Drawing.Size(184, 26);
+            this.submenuprestamo.Size = new System.Drawing.Size(128, 22);
             this.submenuprestamo.Text = "Registrar";
             this.submenuprestamo.Click += new System.EventHandler(this.submenuprestamo_Click);
             // 
@@ -544,9 +548,23 @@
             this.submenudetalleprestamo.IconColor = System.Drawing.Color.Black;
             this.submenudetalleprestamo.IconFont = FontAwesome.Sharp.IconFont.Auto;
             this.submenudetalleprestamo.Name = "submenudetalleprestamo";
-            this.submenudetalleprestamo.Size = new System.Drawing.Size(184, 26);
+            this.submenudetalleprestamo.Size = new System.Drawing.Size(128, 22);
             this.submenudetalleprestamo.Text = "Ver detalle";
             this.submenudetalleprestamo.Click += new System.EventHandler(this.submenudetalleprestamo_Click);
+            // 
+            // submenureportefarmacia
+            // 
+            this.submenureportefarmacia.Name = "submenureportefarmacia";
+            this.submenureportefarmacia.Size = new System.Drawing.Size(180, 22);
+            this.submenureportefarmacia.Text = "Reporte Farmacias";
+            this.submenureportefarmacia.Click += new System.EventHandler(this.submenureportefarmacia_Click);
+            // 
+            // submenureporteauditoria
+            // 
+            this.submenureporteauditoria.Name = "submenureporteauditoria";
+            this.submenureporteauditoria.Size = new System.Drawing.Size(180, 22);
+            this.submenureporteauditoria.Text = "Reporte Auditoria";
+            this.submenureporteauditoria.Click += new System.EventHandler(this.submenureporteauditoria_Click);
             // 
             // Inicio
             // 
@@ -629,6 +647,8 @@
         private FontAwesome.Sharp.IconMenuItem menuprestamo;
         private FontAwesome.Sharp.IconMenuItem submenuprestamo;
         private FontAwesome.Sharp.IconMenuItem submenudetalleprestamo;
+        private System.Windows.Forms.ToolStripMenuItem submenureportefarmacia;
+        private System.Windows.Forms.ToolStripMenuItem submenureporteauditoria;
     }
 }
 

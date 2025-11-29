@@ -16,7 +16,8 @@ GO
  * SP_REGISTRARUSUARIO
  * Sirve para registrar un nuevo usuario validando que no exista otro con el mismo documento.
  */
-alter PROCEDURE SP_REGISTRAR_USUARIO (
+CREATE PROCEDURE SP_REGISTRAR_USUARIO
+(
     @Documento         VARCHAR(50),
     @NombreCompleto    VARCHAR(100),
     @NombreUsuario     VARCHAR(50),
@@ -62,7 +63,7 @@ GO
  * SP_EDITARUSUARIO
  * Sirve para modificar datos de un usuario existente validando que no exista otro con el mismo documento.
  */
-ALTER PROCEDURE SP_EDITAR_USUARIO
+CREATE PROCEDURE SP_EDITAR_USUARIO
 (
     @IdUsuario INT,
     @Documento VARCHAR(50),
@@ -198,7 +199,7 @@ GO
  * SP_RegistrarRoles
  * Sirve para registrar una nueva marca validando que no exista otra con la misma descripción (insensible a mayúsculas).
  */
-alter PROCEDURE SP_REGISTRAR_ROLES (
+CREATE PROCEDURE SP_REGISTRAR_ROLES (
     @Descripcion VARCHAR(50),
     @Estado BIT,
     @Resultado INT OUTPUT,
@@ -235,7 +236,7 @@ GO
  * sp_EditarMarca
  * Sirve para modificar una marca existente validando que no exista otra con la misma descripción.
  */
-alter PROCEDURE SP_EDITAR_ROL (
+CREATE PROCEDURE SP_EDITAR_ROL (
     @IdRol INT,
     @Descripcion VARCHAR(50),
     @Estado BIT,
@@ -327,7 +328,7 @@ GO
  * sp_ModificarEquipo
  * Sirve para modificar un equipo existente validando que no exista otro con el mismo código.
  */
-alter PROCEDURE SP_MODIFICAR_EQUIPO (
+CREATE PROCEDURE SP_MODIFICAR_EQUIPO (
     @IdEquipo INT,
     @Codigo VARCHAR(20),
     @Nombre VARCHAR(30),
@@ -446,12 +447,28 @@ BEGIN
     INNER JOIN FARMACIA F ON A.IdFarmacia = F.IdFarmacia
     INNER JOIN DETALLE_ACTA DA ON A.IdActa = DA.IdActa
     INNER JOIN EQUIPO E ON E.IdEquipo = DA.IdEquipo
-    INNER JOIN USUARIO U ON U.IdUsuario = DA.IdUsuarioAutorizo
+    INNER JOIN USUARIO U ON U.IdUsuario = A.IdUsuarioAutorizo
     WHERE A.EstadoAutorizacion = 'AUTORIZADO'
       AND A.FechaRegistro >= @FechaInicio 
       AND A.FechaRegistro < DATEADD(DAY, 1, @FechaFin)
 END
 GO
+
+
+select * from USUARIO
+UPDATE ACTA
+SET IdUsuarioAutorizo = 1
+WHERE EstadoAutorizacion = 'AUTORIZADO';
+
+ALTER TABLE ACTA
+ADD IdUsuarioAutorizo INT NULL;
+GO
+
+ALTER TABLE ACTA
+ADD CONSTRAINT FK_ACTA_USUARIO_AUTORIZO
+FOREIGN KEY (IdUsuarioAutorizo) REFERENCES USUARIO(IdUsuario);
+GO
+
 
 
 /****************** PROCEDIMIENTOS ALMACENADOS PARA FARMACIA ******************/
@@ -595,3 +612,28 @@ BEGIN
     END CATCH
 END
 GO
+
+
+CREATE PROCEDURE SP_BUSCAR_SERIE
+    @NumeroSerie VARCHAR(100)
+AS
+BEGIN
+    SELECT 
+        A.NumeroDocumento,
+        A.FechaRegistro,
+        F.Nombre AS NombreFarmacia,
+        E.Codigo AS CodigoEquipo,
+        E.Nombre AS NombreEquipo,
+        M.Descripcion AS Marca,
+        U.NombreCompleto AS NombreCompleto,
+        DA.Cantidad,
+        DA.NumeroSerial,
+        DA.Caja
+    FROM ACTA A
+    INNER JOIN FARMACIA F   ON A.IdFarmacia = F.IdFarmacia
+    INNER JOIN DETALLE_ACTA DA ON A.IdActa = DA.IdActa
+    INNER JOIN EQUIPO E     ON E.IdEquipo = DA.IdEquipo
+    INNER JOIN MARCA M      ON M.IdMarca = E.IdMarca
+    INNER JOIN USUARIO U    ON U.IdUsuario = A.IdUsuario
+    WHERE DA.NumeroSerial = @NumeroSerie;
+END

@@ -17,6 +17,10 @@ namespace CapaNegocio
             return objcd_reporte.ReporteActas(fechainicio, fechafin);
         }
 
+        public List<Prestamo_Reporte> ReportePrestamo(string fechainicio, string fechafin)
+        {
+            return objcd_reporte.ReportePrestamo(fechainicio, fechafin);
+        }
 
         public List<ReporteRegistrar> Registrar(string fechainicio, string fechafin)
         {
@@ -27,5 +31,11 @@ namespace CapaNegocio
         {
             return objcd_reporte.ObtenerAuditoria(tabla, fechainicio, fechafin);
         }
+
+        public ActaReporte BuscarSerie(string numeroSerie)
+        {
+            return new CD_Reporte().BuscarSerie(numeroSerie);
+        }
+
     }
 }

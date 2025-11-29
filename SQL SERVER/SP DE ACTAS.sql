@@ -302,6 +302,7 @@ END
 GO
 
 
+
 /****************** PROCEDIMIENTO PARA OBTENER EQUIPOS PENDIENTES POR FARMACIA ******************/
 /* Obtiene los equipos con estado pendiente para una farmacia (o todas si es NULL) */
 CREATE PROCEDURE SP_OBTENER_EQUIPOS_PENDIENTES_POR_FARMACIA
@@ -358,7 +359,6 @@ BEGIN
             E.Codigo AS CodigoEquipo,
             E.Nombre AS NombreEquipo,
 		    M.Descripcion AS MarcaEquipo,
-            ES.Descripcion AS Estado,
             DA.Cantidad,
             DA.NumeroSerial,
             DA.Caja,
@@ -370,7 +370,6 @@ BEGIN
         INNER JOIN DETALLE_ACTA DA ON A.IdActa = DA.IdActa
         INNER JOIN EQUIPO E ON E.IdEquipo = DA.IdEquipo
 		INNER JOIN MARCA M ON E.IdMarca = M.IdMarca 
-        INNER JOIN ESTADO ES ON ES.IdEstado = E.IdEstado
         LEFT JOIN USUARIO US ON DA.IdUsuarioSolicita = US.IdUsuario
         WHERE LTRIM(RTRIM(UPPER(DA.EstadoBaja))) = 'EN ESPERA'
         ORDER BY A.FechaRegistro DESC;
@@ -417,7 +416,7 @@ GO
 
 /****************** PROCEDIMIENTO PARA AUTORIZAR EQUIPO PENDIENTE ******************/
 /* Autoriza un equipo pendiente, valida stock y actualiza estado y stock */
-ALTER PROCEDURE SP_AUTORIZAR_EQUIPO_PENDIENTE
+CREATE PROCEDURE SP_AUTORIZAR_EQUIPO_PENDIENTE
 (
     @NumeroDocumento   VARCHAR(100),
     @CodigoEquipo      VARCHAR(100),
@@ -494,27 +493,29 @@ BEGIN
         F.Nombre AS NombreFarmacia,
         E.Codigo AS CodigoEquipo,
         E.Nombre AS NombreEquipo,
-		M.Descripcion AS MarcaEquipo,
-        ES.Descripcion AS Estado,
+        M.Descripcion AS MarcaEquipo,
         DA.Cantidad,
         DA.NumeroSerial,
         DA.Caja,
         DA.MotivoBaja,
         DA.EstadoBaja,
-        U1.NombreCompleto AS UsuarioSolicitante,
-        U2.NombreCompleto AS UsuarioAutorizador
-    FROM ACTA A
+
+        -- SOLICITANTE
+        SOL.NombreCompleto AS UsuarioSolicitante,
+
+        -- AUTORIZADOR
+        AUT.NombreCompleto AS UsuarioAutorizador
+    FROM DETALLE_ACTA DA
+    INNER JOIN ACTA A ON DA.IdActa = A.IdActa
     INNER JOIN FARMACIA F ON A.IdFarmacia = F.IdFarmacia
-    INNER JOIN USUARIO U1 ON A.IdUsuario = U1.IdUsuario
-    INNER JOIN DETALLE_ACTA DA ON A.IdActa = DA.IdActa
     INNER JOIN EQUIPO E ON E.IdEquipo = DA.IdEquipo
-	INNER JOIN MARCA M ON E.IdMarca = M.IdMarca
-    INNER JOIN ESTADO ES ON ES.IdEstado = E.IdEstado
-    LEFT JOIN USUARIO U2 ON DA.IdUsuarioAutorizo = U2.IdUsuario
+    INNER JOIN MARCA M ON E.IdMarca = M.IdMarca
+
+    INNER JOIN USUARIO SOL ON DA.IdUsuarioSolicita = SOL.IdUsuario
+
+    LEFT JOIN USUARIO AUT ON DA.IdUsuarioAutorizo = AUT.IdUsuario
     WHERE DA.EstadoBaja = 'Autorizado';
 END
-GO
-
 
 /****************** PROCEDIMIENTO PARA ELIMINAR EQUIPO AUTORIZADO ******************/
 /* Elimina un equipo autorizado y elimina acta si queda vacía */

@@ -39,7 +39,7 @@ CREATE TABLE PERMISO (
     FOREIGN KEY (IdAccion) REFERENCES ACCION(IdAccion)
 );
 
-select * from MODULO
+
 -- MODULOS
 INSERT INTO MODULO (NombreModulo) VALUES 
 ('menuseguridad'),
@@ -48,8 +48,8 @@ INSERT INTO MODULO (NombreModulo) VALUES
 ('menuacta'), 
 ('menuprestamo'),
 ('menufarmacia'), 
-('menuautorizacion'),
 ('menuasiganados'),
+('menuautorizacion'),
 ('menureportes'),
 ('menuacercade');
 
@@ -57,12 +57,6 @@ INSERT INTO MODULO (NombreModulo) VALUES
 
 -- SUBMENUS
 INSERT INTO SUBMENU (IdModulo, NombreSubMenu) VALUES
-(8, 'submenureportefarmacia'),
-(8, 'submenureporteauditoria'),
-
-(10, 'submenuprestamo'),
-(10, 'submenudetalleprestamo'),
-
 (1, 'submenuroles'),
 (1, 'submenupermisos'),
 (1, 'submenuusuarios'),
@@ -73,25 +67,36 @@ INSERT INTO SUBMENU (IdModulo, NombreSubMenu) VALUES
 (3, 'submenuverdatallecompra'),
 (4, 'submenuregistraracta'),
 (4, 'submenuverdetalleacta'),
-(6, 'submenuauctorizacionacta'),
-(6, 'submenuautorizacionbaja'),
-(6, 'submenuequiposbaja'),
-(8, 'submenureporteacta'),
-(8, 'submenureporteregistrar');
+(4, 'submenuserie'),
+(4, 'submenubuscarserie'),
+(5, 'submenuprestamo'),
+(5, 'submenudetalleprestamo'),
+(5, 'submenuprestamo1'),
+(8, 'submenuauctorizacionacta'),
+(8, 'submenuautorizacionbaja'),
+(8, 'submenuequiposbaja'),
+(9, 'submenureportefarmacia'),
+(9, 'submenureporteauditoria'),
+(9, 'submenureporteusuario'),
+(9, 'submenureporteacta'),
+(9, 'submenureporteregistrar');
+
+select * from SUBMENU
+select * from MODULO
 
 
 -- ACCIONES (ejemplo botones: Agregar, Editar, Eliminar, Ver)
 INSERT INTO ACCION (IdSubMenu, NombreAccion) VALUES
-(1, 'btnguardar'), (1, 'btnlimpiar'),(2, 'btnguardar'), (2, 'btncancelar'),(3, 'btnguardar'), (3, 'btnlimpiar'), (4, 'btnguardar'),(4, 'btnlimpiar'), (5, 'btnexportar'), 
+(1, 'btnguardar'), (1, 'btnlimpiar'),(2, 'btnguardar'), (3, 'btnguardar'), (3, 'btnlimpiar'), (4, 'btnguardar'),(4, 'btnlimpiar'), (5, 'btnexportar'), 
 (5, 'btnguardar'),(5, 'btnlimpiar'), (6, 'btnsubir'), (6, 'btnguardarcambios'), (7, 'btnagregarequipo'), (7, 'btnregistrar'), (8, 'btndescargar'),
-(9, 'btncrearventa'), (10, 'btndescargar'), (12, 'btnguardar'), (12, 'btnlimpiar'), (12, 'btneliminar'), (13, 'btnlimpiar'), (13, 'btneliminar'),(13, 'btnexportar'),
+(9, 'btncrearventa'), (10, 'btndescargar'),(16, 'btnguardar'), (16, 'btnlimpiar'), (16, 'btneliminar'), (17, 'btneliminar')
 (14, 'btnexportar'), (15, 'btnexportar');
 
 INSERT INTO ACCION (IdModulo, NombreAccion) VALUES
-(5,'btnguardar'), (5, 'btnlimpiar'), (7, 'btnlimpiar'), (7, 'btneliminar'), (7, 'btnguardarmotivo'), (7, 'btnexportar');
+(6,'btnguardar'), (6, 'btnlimpiar'), (7, 'btnlimpiar'), (7, 'btneliminar'), (7, 'btnguardarmotivo'), (7, 'btnexportar');
 
 
-DECLARE @idRol INT = 2;
+DECLARE @idRol INT = 1;
 
 SELECT 
     p.IdPermiso, 
@@ -112,4 +117,8 @@ WHERE p.IdRol = @idRol;
 INSERT INTO PERMISO (IdRol, IdModulo, IdSubMenu, IdAccion) VALUES
 (1, 1, 2, 3) -- submenuroles sin acción
 
-select * from AUDITORIA
+select * from USUARIO
+SELECT * from ROL
+SELECT * from MODULO
+SELECT * from SUBMENU
+SELECT * from ACCION

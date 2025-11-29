@@ -284,7 +284,7 @@ namespace CapaDatos
             return respuesta;
         }
 
-        public bool ActualizarEstadoBaja(string numeroDocumento, string codigoEquipo, string numeroSerial, int idUsuarioAutorizo)
+        public bool AutorizarBaja(string numeroDocumento, string codigoEquipo, string numeroSerial, int idUsuarioAutorizo)
         {
             using (SqlConnection conexion = new SqlConnection(Conexion.cadena))
             {
@@ -407,10 +407,6 @@ namespace CapaDatos
                                     oMarca = new Marca
                                     {
                                         Descripcion = dr["MarcaEquipo"]?.ToString() ?? "" // ← Aquí se asigna la marca
-                                    },
-                                    oEstado = new Estado
-                                    {
-                                        Descripcion = dr["Estado"].ToString()
                                     }
                                 },
 
@@ -612,10 +608,6 @@ namespace CapaDatos
                                         oMarca = new Marca
                                         {
                                             Descripcion = dr["MarcaEquipo"]?.ToString() ?? "" // ← Aquí se asigna la marca
-                                        },
-                                        oEstado = new Estado() 
-                                        { 
-                                            Descripcion = dr["Estado"].ToString()
                                         }
                                     },
                                     Cantidad = Convert.ToInt32(dr["Cantidad"]),
@@ -666,9 +658,10 @@ namespace CapaDatos
             return resultado;
         }
 
-        public bool LimpiarMotivoYEstado(string numeroDocumento, string codigoEquipo, string numeroSerial)
+        public bool LimpiarMotivoYEstado(string numeroDocumento, string codigoEquipo, string numeroSerial, out string mensaje)
         {
             bool resultado = false;
+            mensaje = string.Empty;
 
             using (SqlConnection conexion = new SqlConnection(Conexion.cadena))
             {
@@ -681,25 +674,28 @@ namespace CapaDatos
                     cmd.Parameters.AddWithValue("@CodigoEquipo", codigoEquipo);
                     cmd.Parameters.AddWithValue("@NumeroSerial", numeroSerial);
 
+                    // Parámetros OUTPUT
+                    SqlParameter paramResultado = new SqlParameter("@Resultado", SqlDbType.Bit) { Direction = ParameterDirection.Output };
+                    SqlParameter paramMensaje = new SqlParameter("@Mensaje", SqlDbType.VarChar, 500) { Direction = ParameterDirection.Output };
+
+                    cmd.Parameters.Add(paramResultado);
+                    cmd.Parameters.Add(paramMensaje);
+
                     conexion.Open();
+                    cmd.ExecuteNonQuery();
 
-                    int filasAfectadas = cmd.ExecuteNonQuery();
-
-                    // Considera que aunque no se afecte ninguna fila, la operación no falló
-                    resultado = true; // Aquí defines que si no hubo excepción, es éxito
-
-                    // O si quieres verificar que haya afectado al menos 1 fila:
-                    // resultado = filasAfectadas > 0;
+                    resultado = Convert.ToBoolean(paramResultado.Value);
+                    mensaje = paramMensaje.Value.ToString();
                 }
                 catch (Exception ex)
                 {
-                    // Puedes guardar el mensaje si deseas
-                    Console.WriteLine("Error al ejecutar procedimiento: " + ex.Message);
                     resultado = false;
+                    mensaje = "Error al ejecutar procedimiento: " + ex.Message;
                 }
             }
 
             return resultado;
         }
+
     }
 }

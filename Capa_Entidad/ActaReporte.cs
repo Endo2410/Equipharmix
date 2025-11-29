@@ -20,5 +20,6 @@ namespace CapaEntidad
         public string EstadoBaja { get; set; }
         public string EstadoAutorizacion { get; set; }
         public string NombreCompleto { get; set; }
+        public string Marca { get; set; }
     }
 }

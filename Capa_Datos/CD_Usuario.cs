@@ -183,12 +183,22 @@ namespace CapaDatos
             {
                 try
                 {
+
+                    conexion.Open();
+
+                    // Guardar usuario logueado en SESSION_CONTEXT para auditoría
+                    using (SqlCommand cmdt = new SqlCommand("EXEC sp_set_session_context @key, @value", conexion))
+                    {
+                        cmdt.Parameters.AddWithValue("@key", "Usuario");
+                        cmdt.Parameters.AddWithValue("@value", UsuarioSesion.NombreCompleto);
+                        cmdt.ExecuteNonQuery();
+                    }
+
                     SqlCommand cmd = new SqlCommand("SP_ACTUALIZAR_CLAVE", conexion);
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("@IdUsuario", idUsuario);
                     cmd.Parameters.AddWithValue("@NuevaClave", nuevaClave);
 
-                    conexion.Open();
                     cmd.ExecuteNonQuery();
                     resultado = true;
                 }

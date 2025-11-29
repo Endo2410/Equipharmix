@@ -36,9 +36,7 @@
             this.txtindice = new System.Windows.Forms.TextBox();
             this.label9 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
-            this.txtestado = new System.Windows.Forms.TextBox();
             this.txtestadobaja = new System.Windows.Forms.TextBox();
-            this.label17 = new System.Windows.Forms.Label();
             this.txtcaja = new System.Windows.Forms.TextBox();
             this.label16 = new System.Windows.Forms.Label();
             this.txtserial = new System.Windows.Forms.TextBox();
@@ -72,6 +70,21 @@
             this.btnexportar = new FontAwesome.Sharp.IconButton();
             this.txtmarca = new System.Windows.Forms.TextBox();
             this.label18 = new System.Windows.Forms.Label();
+            this.btnseleccionar = new System.Windows.Forms.DataGridViewButtonColumn();
+            this.NumeroDocumento = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.FechaRegistro = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.NombreFarmacia = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.CodigoEquipo = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.NombreEquipo = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Marca = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Cantidad = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.NumeroSerial = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Caja = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.MotivoBaja = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.EstadoBaja = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.UsuarioSolicitante = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.UsuarioAutorizador = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.tipo = new System.Windows.Forms.DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.dgvdata)).BeginInit();
             this.SuspendLayout();
             // 
@@ -92,6 +105,22 @@
             dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
             this.dgvdata.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.dgvdata.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgvdata.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.btnseleccionar,
+            this.NumeroDocumento,
+            this.FechaRegistro,
+            this.NombreFarmacia,
+            this.CodigoEquipo,
+            this.NombreEquipo,
+            this.Marca,
+            this.Cantidad,
+            this.NumeroSerial,
+            this.Caja,
+            this.MotivoBaja,
+            this.EstadoBaja,
+            this.UsuarioSolicitante,
+            this.UsuarioAutorizador,
+            this.tipo});
             this.dgvdata.Location = new System.Drawing.Point(281, 117);
             this.dgvdata.MultiSelect = false;
             this.dgvdata.Name = "dgvdata";
@@ -101,9 +130,10 @@
             dataGridViewCellStyle2.SelectionForeColor = System.Drawing.Color.Black;
             this.dgvdata.RowsDefaultCellStyle = dataGridViewCellStyle2;
             this.dgvdata.RowTemplate.Height = 28;
-            this.dgvdata.Size = new System.Drawing.Size(1389, 665);
+            this.dgvdata.Size = new System.Drawing.Size(1435, 665);
             this.dgvdata.TabIndex = 161;
             this.dgvdata.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvdata_CellContentClick);
+            this.dgvdata.CellPainting += new System.Windows.Forms.DataGridViewCellPaintingEventHandler(this.dgvdata_CellPainting);
             // 
             // txtid
             // 
@@ -122,7 +152,7 @@
             this.label10.Location = new System.Drawing.Point(281, 38);
             this.label10.Name = "label10";
             this.label10.Padding = new System.Windows.Forms.Padding(6, 0, 0, 0);
-            this.label10.Size = new System.Drawing.Size(1389, 61);
+            this.label10.Size = new System.Drawing.Size(1435, 61);
             this.label10.TabIndex = 162;
             this.label10.Text = "Lista de bajas";
             // 
@@ -157,35 +187,17 @@
             this.label1.Size = new System.Drawing.Size(261, 782);
             this.label1.TabIndex = 146;
             // 
-            // txtestado
-            // 
-            this.txtestado.Location = new System.Drawing.Point(40, 338);
-            this.txtestado.Name = "txtestado";
-            this.txtestado.ReadOnly = true;
-            this.txtestado.Size = new System.Drawing.Size(192, 20);
-            this.txtestado.TabIndex = 197;
-            // 
             // txtestadobaja
             // 
-            this.txtestadobaja.Location = new System.Drawing.Point(44, 543);
+            this.txtestadobaja.Location = new System.Drawing.Point(42, 501);
             this.txtestadobaja.Name = "txtestadobaja";
             this.txtestadobaja.ReadOnly = true;
             this.txtestadobaja.Size = new System.Drawing.Size(192, 20);
             this.txtestadobaja.TabIndex = 196;
             // 
-            // label17
-            // 
-            this.label17.AutoSize = true;
-            this.label17.BackColor = System.Drawing.Color.White;
-            this.label17.Location = new System.Drawing.Point(36, 322);
-            this.label17.Name = "label17";
-            this.label17.Size = new System.Drawing.Size(43, 13);
-            this.label17.TabIndex = 195;
-            this.label17.Text = "Estado:";
-            // 
             // txtcaja
             // 
-            this.txtcaja.Location = new System.Drawing.Point(44, 460);
+            this.txtcaja.Location = new System.Drawing.Point(42, 418);
             this.txtcaja.Name = "txtcaja";
             this.txtcaja.ReadOnly = true;
             this.txtcaja.Size = new System.Drawing.Size(192, 20);
@@ -195,7 +207,7 @@
             // 
             this.label16.AutoSize = true;
             this.label16.BackColor = System.Drawing.Color.White;
-            this.label16.Location = new System.Drawing.Point(41, 444);
+            this.label16.Location = new System.Drawing.Point(39, 402);
             this.label16.Name = "label16";
             this.label16.Size = new System.Drawing.Size(28, 13);
             this.label16.TabIndex = 193;
@@ -203,7 +215,7 @@
             // 
             // txtserial
             // 
-            this.txtserial.Location = new System.Drawing.Point(42, 421);
+            this.txtserial.Location = new System.Drawing.Point(40, 379);
             this.txtserial.Name = "txtserial";
             this.txtserial.ReadOnly = true;
             this.txtserial.Size = new System.Drawing.Size(192, 20);
@@ -213,7 +225,7 @@
             // 
             this.label15.AutoSize = true;
             this.label15.BackColor = System.Drawing.Color.White;
-            this.label15.Location = new System.Drawing.Point(39, 405);
+            this.label15.Location = new System.Drawing.Point(37, 363);
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(36, 13);
             this.label15.TabIndex = 191;
@@ -221,7 +233,7 @@
             // 
             // txtcantidad
             // 
-            this.txtcantidad.Location = new System.Drawing.Point(42, 382);
+            this.txtcantidad.Location = new System.Drawing.Point(40, 340);
             this.txtcantidad.Name = "txtcantidad";
             this.txtcantidad.ReadOnly = true;
             this.txtcantidad.Size = new System.Drawing.Size(192, 20);
@@ -231,7 +243,7 @@
             // 
             this.label14.AutoSize = true;
             this.label14.BackColor = System.Drawing.Color.White;
-            this.label14.Location = new System.Drawing.Point(39, 366);
+            this.label14.Location = new System.Drawing.Point(37, 324);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(49, 13);
             this.label14.TabIndex = 189;
@@ -293,7 +305,7 @@
             // 
             // txtmotivo
             // 
-            this.txtmotivo.Location = new System.Drawing.Point(44, 627);
+            this.txtmotivo.Location = new System.Drawing.Point(42, 585);
             this.txtmotivo.Name = "txtmotivo";
             this.txtmotivo.ReadOnly = true;
             this.txtmotivo.Size = new System.Drawing.Size(190, 69);
@@ -311,7 +323,7 @@
             this.btneliminar.IconColor = System.Drawing.Color.White;
             this.btneliminar.IconFont = FontAwesome.Sharp.IconFont.Auto;
             this.btneliminar.IconSize = 16;
-            this.btneliminar.Location = new System.Drawing.Point(42, 739);
+            this.btneliminar.Location = new System.Drawing.Point(40, 697);
             this.btneliminar.Name = "btneliminar";
             this.btneliminar.Size = new System.Drawing.Size(192, 23);
             this.btneliminar.TabIndex = 180;
@@ -332,7 +344,7 @@
             this.btnlimpiar.IconColor = System.Drawing.Color.White;
             this.btnlimpiar.IconFont = FontAwesome.Sharp.IconFont.Auto;
             this.btnlimpiar.IconSize = 18;
-            this.btnlimpiar.Location = new System.Drawing.Point(42, 711);
+            this.btnlimpiar.Location = new System.Drawing.Point(40, 669);
             this.btnlimpiar.Name = "btnlimpiar";
             this.btnlimpiar.Size = new System.Drawing.Size(192, 23);
             this.btnlimpiar.TabIndex = 179;
@@ -346,7 +358,7 @@
             // 
             this.label8.AutoSize = true;
             this.label8.BackColor = System.Drawing.Color.White;
-            this.label8.Location = new System.Drawing.Point(41, 527);
+            this.label8.Location = new System.Drawing.Point(39, 485);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(67, 13);
             this.label8.TabIndex = 177;
@@ -372,7 +384,7 @@
             // 
             // txtsolicitante
             // 
-            this.txtsolicitante.Location = new System.Drawing.Point(44, 498);
+            this.txtsolicitante.Location = new System.Drawing.Point(42, 456);
             this.txtsolicitante.Name = "txtsolicitante";
             this.txtsolicitante.ReadOnly = true;
             this.txtsolicitante.Size = new System.Drawing.Size(192, 20);
@@ -390,7 +402,7 @@
             // 
             this.label4.AutoSize = true;
             this.label4.BackColor = System.Drawing.Color.White;
-            this.label4.Location = new System.Drawing.Point(41, 611);
+            this.label4.Location = new System.Drawing.Point(39, 569);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(39, 13);
             this.label4.TabIndex = 170;
@@ -400,7 +412,7 @@
             // 
             this.label3.AutoSize = true;
             this.label3.BackColor = System.Drawing.Color.White;
-            this.label3.Location = new System.Drawing.Point(41, 483);
+            this.label3.Location = new System.Drawing.Point(39, 441);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(56, 13);
             this.label3.TabIndex = 172;
@@ -418,7 +430,7 @@
             // 
             // txtautorizador
             // 
-            this.txtautorizador.Location = new System.Drawing.Point(42, 584);
+            this.txtautorizador.Location = new System.Drawing.Point(40, 542);
             this.txtautorizador.Name = "txtautorizador";
             this.txtautorizador.ReadOnly = true;
             this.txtautorizador.Size = new System.Drawing.Size(192, 20);
@@ -428,7 +440,7 @@
             // 
             this.label6.AutoSize = true;
             this.label6.BackColor = System.Drawing.Color.White;
-            this.label6.Location = new System.Drawing.Point(39, 569);
+            this.label6.Location = new System.Drawing.Point(37, 527);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(60, 13);
             this.label6.TabIndex = 198;
@@ -445,7 +457,7 @@
             this.btnbuscar.IconColor = System.Drawing.Color.Black;
             this.btnbuscar.IconFont = FontAwesome.Sharp.IconFont.Auto;
             this.btnbuscar.IconSize = 16;
-            this.btnbuscar.Location = new System.Drawing.Point(1568, 59);
+            this.btnbuscar.Location = new System.Drawing.Point(1616, 59);
             this.btnbuscar.Name = "btnbuscar";
             this.btnbuscar.Size = new System.Drawing.Size(42, 23);
             this.btnbuscar.TabIndex = 203;
@@ -463,7 +475,7 @@
             this.btnlimpiarbuscador.IconColor = System.Drawing.Color.Black;
             this.btnlimpiarbuscador.IconFont = FontAwesome.Sharp.IconFont.Auto;
             this.btnlimpiarbuscador.IconSize = 18;
-            this.btnlimpiarbuscador.Location = new System.Drawing.Point(1616, 59);
+            this.btnlimpiarbuscador.Location = new System.Drawing.Point(1664, 59);
             this.btnlimpiarbuscador.Name = "btnlimpiarbuscador";
             this.btnlimpiarbuscador.Size = new System.Drawing.Size(42, 23);
             this.btnlimpiarbuscador.TabIndex = 204;
@@ -473,7 +485,7 @@
             // 
             // txtbusqueda
             // 
-            this.txtbusqueda.Location = new System.Drawing.Point(1408, 60);
+            this.txtbusqueda.Location = new System.Drawing.Point(1456, 60);
             this.txtbusqueda.Name = "txtbusqueda";
             this.txtbusqueda.Size = new System.Drawing.Size(152, 20);
             this.txtbusqueda.TabIndex = 202;
@@ -482,7 +494,7 @@
             // 
             this.cbobusqueda.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbobusqueda.FormattingEnabled = true;
-            this.cbobusqueda.Location = new System.Drawing.Point(1286, 59);
+            this.cbobusqueda.Location = new System.Drawing.Point(1334, 59);
             this.cbobusqueda.Name = "cbobusqueda";
             this.cbobusqueda.Size = new System.Drawing.Size(116, 21);
             this.cbobusqueda.TabIndex = 201;
@@ -491,7 +503,7 @@
             // 
             this.label11.AutoSize = true;
             this.label11.BackColor = System.Drawing.Color.White;
-            this.label11.Location = new System.Drawing.Point(1205, 65);
+            this.label11.Location = new System.Drawing.Point(1253, 65);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(61, 13);
             this.label11.TabIndex = 200;
@@ -535,13 +547,118 @@
             this.label18.TabIndex = 246;
             this.label18.Text = "Marca";
             // 
+            // btnseleccionar
+            // 
+            this.btnseleccionar.HeaderText = "";
+            this.btnseleccionar.Name = "btnseleccionar";
+            this.btnseleccionar.ReadOnly = true;
+            this.btnseleccionar.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            this.btnseleccionar.Width = 30;
+            // 
+            // NumeroDocumento
+            // 
+            this.NumeroDocumento.HeaderText = "Documento";
+            this.NumeroDocumento.Name = "NumeroDocumento";
+            this.NumeroDocumento.ReadOnly = true;
+            this.NumeroDocumento.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            this.NumeroDocumento.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            // 
+            // FechaRegistro
+            // 
+            this.FechaRegistro.HeaderText = "Fecha";
+            this.FechaRegistro.Name = "FechaRegistro";
+            this.FechaRegistro.ReadOnly = true;
+            this.FechaRegistro.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            this.FechaRegistro.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            // 
+            // NombreFarmacia
+            // 
+            this.NombreFarmacia.HeaderText = "Farmacia";
+            this.NombreFarmacia.Name = "NombreFarmacia";
+            this.NombreFarmacia.ReadOnly = true;
+            this.NombreFarmacia.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            this.NombreFarmacia.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            // 
+            // CodigoEquipo
+            // 
+            this.CodigoEquipo.HeaderText = "Cod. Equipo";
+            this.CodigoEquipo.Name = "CodigoEquipo";
+            this.CodigoEquipo.ReadOnly = true;
+            this.CodigoEquipo.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            this.CodigoEquipo.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            // 
+            // NombreEquipo
+            // 
+            this.NombreEquipo.HeaderText = "Equipo";
+            this.NombreEquipo.Name = "NombreEquipo";
+            this.NombreEquipo.ReadOnly = true;
+            this.NombreEquipo.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            this.NombreEquipo.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            // 
+            // Marca
+            // 
+            this.Marca.HeaderText = "Marca";
+            this.Marca.Name = "Marca";
+            this.Marca.ReadOnly = true;
+            this.Marca.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            this.Marca.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            // 
+            // Cantidad
+            // 
+            this.Cantidad.HeaderText = "Cant";
+            this.Cantidad.Name = "Cantidad";
+            this.Cantidad.ReadOnly = true;
+            this.Cantidad.Width = 40;
+            // 
+            // NumeroSerial
+            // 
+            this.NumeroSerial.HeaderText = "Serial ";
+            this.NumeroSerial.Name = "NumeroSerial";
+            this.NumeroSerial.ReadOnly = true;
+            // 
+            // Caja
+            // 
+            this.Caja.HeaderText = "Caja";
+            this.Caja.Name = "Caja";
+            this.Caja.ReadOnly = true;
+            // 
+            // MotivoBaja
+            // 
+            this.MotivoBaja.HeaderText = "Motivo Baja";
+            this.MotivoBaja.Name = "MotivoBaja";
+            this.MotivoBaja.ReadOnly = true;
+            // 
+            // EstadoBaja
+            // 
+            this.EstadoBaja.HeaderText = "Estado Baja";
+            this.EstadoBaja.Name = "EstadoBaja";
+            this.EstadoBaja.ReadOnly = true;
+            // 
+            // UsuarioSolicitante
+            // 
+            this.UsuarioSolicitante.HeaderText = "Usuario Solicitante";
+            this.UsuarioSolicitante.Name = "UsuarioSolicitante";
+            this.UsuarioSolicitante.ReadOnly = true;
+            // 
+            // UsuarioAutorizador
+            // 
+            this.UsuarioAutorizador.HeaderText = "Usuario Autorizador";
+            this.UsuarioAutorizador.Name = "UsuarioAutorizador";
+            this.UsuarioAutorizador.ReadOnly = true;
+            // 
+            // tipo
+            // 
+            this.tipo.HeaderText = "Movimiento";
+            this.tipo.Name = "tipo";
+            this.tipo.ReadOnly = true;
+            // 
             // frmbaja
             // 
             this.AcceptButton = this.btnbuscar;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.ClientSize = new System.Drawing.Size(1679, 782);
+            this.ClientSize = new System.Drawing.Size(1728, 782);
             this.Controls.Add(this.txtmarca);
             this.Controls.Add(this.label18);
             this.Controls.Add(this.btnexportar);
@@ -552,9 +669,7 @@
             this.Controls.Add(this.label11);
             this.Controls.Add(this.txtautorizador);
             this.Controls.Add(this.label6);
-            this.Controls.Add(this.txtestado);
             this.Controls.Add(this.txtestadobaja);
-            this.Controls.Add(this.label17);
             this.Controls.Add(this.txtcaja);
             this.Controls.Add(this.label16);
             this.Controls.Add(this.txtserial);
@@ -601,9 +716,7 @@
         private System.Windows.Forms.TextBox txtindice;
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.TextBox txtestado;
         private System.Windows.Forms.TextBox txtestadobaja;
-        private System.Windows.Forms.Label label17;
         private System.Windows.Forms.TextBox txtcaja;
         private System.Windows.Forms.Label label16;
         private System.Windows.Forms.TextBox txtserial;
@@ -637,5 +750,20 @@
         private FontAwesome.Sharp.IconButton btnexportar;
         private System.Windows.Forms.TextBox txtmarca;
         private System.Windows.Forms.Label label18;
+        private System.Windows.Forms.DataGridViewButtonColumn btnseleccionar;
+        private System.Windows.Forms.DataGridViewTextBoxColumn NumeroDocumento;
+        private System.Windows.Forms.DataGridViewTextBoxColumn FechaRegistro;
+        private System.Windows.Forms.DataGridViewTextBoxColumn NombreFarmacia;
+        private System.Windows.Forms.DataGridViewTextBoxColumn CodigoEquipo;
+        private System.Windows.Forms.DataGridViewTextBoxColumn NombreEquipo;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Marca;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Cantidad;
+        private System.Windows.Forms.DataGridViewTextBoxColumn NumeroSerial;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Caja;
+        private System.Windows.Forms.DataGridViewTextBoxColumn MotivoBaja;
+        private System.Windows.Forms.DataGridViewTextBoxColumn EstadoBaja;
+        private System.Windows.Forms.DataGridViewTextBoxColumn UsuarioSolicitante;
+        private System.Windows.Forms.DataGridViewTextBoxColumn UsuarioAutorizador;
+        private System.Windows.Forms.DataGridViewTextBoxColumn tipo;
     }
 }

@@ -47,7 +47,7 @@ BEGIN
     FROM ROL
 END
 
-
+select * from ROL
 ----LISTAR SUB MENU
 CREATE PROCEDURE SP_LISTAR_SUB_MENU
 AS
@@ -468,3 +468,6 @@ BEGIN
       AND FechaRegistro < DATEADD(DAY, 1, @FechaFin)  -- Incluye toda la fecha final
 END
 GO
+
+
+

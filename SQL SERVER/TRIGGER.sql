@@ -499,7 +499,7 @@ GO
 delete from AUDITORIA
 
 
-alter PROCEDURE SP_Reporte_Auditoria
+CREATE PROCEDURE SP_Reporte_Auditoria
     @FechaInicio DATETIME,
     @FechaFin DATETIME
 AS

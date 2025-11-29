@@ -32,9 +32,9 @@ namespace CapaDatos
                                 prestamo = new Prestamo
                                 {
                                     NumeroDocumento = numeroDoc,
-                                    FechaPrestamo = Convert.ToDateTime(dr["FechaRegistro"]),
+                                    FechaPrestamo = Convert.ToDateTime(dr["FechaPrestamo"]), // asegúrate que el alias coincida
                                     oFarmacia = new Farmacia { Nombre = dr["NombreFarmacia"].ToString() },
-                                    oUsuario = new Usuario { NombreCompleto = dr["CreadorActa"].ToString() },
+                                    oUsuario = new Usuario { NombreCompleto = dr["NombreCompleto"].ToString() },
                                     oDetalle = new List<Detalle_Prestamo>()
                                 };
                                 lista.Add(prestamo);
@@ -50,7 +50,9 @@ namespace CapaDatos
                                     oMarca = new Marca { Descripcion = dr["MarcaEquipo"].ToString() }
                                 },
                                 Cantidad = Convert.ToInt32(dr["Cantidad"]),
-                                NumeroSerial = dr["NumeroSerial"].ToString()
+                                NumeroSerial = dr["NumeroSerial"].ToString(),
+                                MotivoBaja = dr["MotivoBaja"] != DBNull.Value ? dr["MotivoBaja"].ToString() : "",
+                                EstadoBaja = dr["EstadoBaja"] != DBNull.Value ? dr["EstadoBaja"].ToString() : ""
                             };
 
                             prestamo.oDetalle.Add(detalle);
@@ -65,6 +67,8 @@ namespace CapaDatos
 
             return lista;
         }
+
+
         public bool RegistrarPrestamo(Prestamo obj, DataTable detallePrestamo, out string mensaje)
         {
             bool resultado = false;
@@ -378,5 +382,199 @@ namespace CapaDatos
 
             return resultado;
         }
+
+        public bool MarcarPrestamoEquipoComoEnEspera(string numeroDocumento, string codigoEquipo, string numeroSerial, string motivo, int idUsuario)
+        {
+            using (SqlConnection con = new SqlConnection(Conexion.cadena))
+            {
+                SqlCommand cmd = new SqlCommand("SP_MARCAR_PRESTAMO_EN_ESPERA", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+
+                cmd.Parameters.AddWithValue("@NumeroDocumento", numeroDocumento);
+                cmd.Parameters.AddWithValue("@CodigoEquipo", codigoEquipo);
+                cmd.Parameters.AddWithValue("@NumeroSerial", numeroSerial);
+                cmd.Parameters.AddWithValue("@MotivoBaja", motivo);
+                cmd.Parameters.AddWithValue("@IdUsuarioSolicita", idUsuario);
+
+                con.Open();
+                int filas = Convert.ToInt32(cmd.ExecuteScalar());
+                return filas > 0;
+            }
+        }
+
+        public List<Detalle_Prestamo> ObtenerEquiposPrestamoEnEspera()
+        {
+            List<Detalle_Prestamo> lista = new List<Detalle_Prestamo>();
+
+            using (SqlConnection conexion = new SqlConnection(Conexion.cadena))
+            {
+                try
+                {
+                    conexion.Open();
+                    SqlCommand cmd = new SqlCommand("SP_OBTENER_EQUIPOS_PRESTAMO_EN_ESPERA", conexion);
+                    cmd.CommandType = CommandType.StoredProcedure;
+
+                    using (SqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        while (dr.Read())
+                        {
+                            lista.Add(new Detalle_Prestamo
+                            {
+                                NumeroDocumento = dr["NumeroDocumento"].ToString(),
+
+                                FechaPrestamo = Convert.ToDateTime(dr["FechaPrestamo"]),
+                                FechaRegistro = Convert.ToDateTime(dr["FechaRegistro"]),
+
+                                NumeroSerial = dr["NumeroSerial"].ToString(),
+                                Cantidad = Convert.ToInt32(dr["Cantidad"]),
+                                MotivoBaja = dr["MotivoBaja"].ToString(),
+                                EstadoBaja = dr["EstadoBaja"].ToString(),
+
+                                // Usuario solicitante
+                                oUsuarioSolicitante = new Usuario()
+                                {
+                                    NombreCompleto = dr["UsuarioSolicitante"].ToString()
+                                },
+
+                                // Equipo
+                                oEquipo = new Equipo()
+                                {
+                                    Codigo = dr["CodigoEquipo"].ToString(),
+                                    Nombre = dr["NombreEquipo"].ToString(),
+
+                                    oMarca = new Marca()
+                                    {
+                                        Descripcion = dr["Marca"].ToString()
+                                    }
+                                },
+
+                                // Farmacia
+                                oFarmacia = new Farmacia()
+                                {
+                                    Nombre = dr["NombreFarmacia"].ToString()
+                                }
+                            });
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception("Error al obtener equipos de préstamo en espera: " + ex.Message);
+                }
+            }
+
+            return lista;
+        }
+
+        public bool LimpiarMotivoYEstado(string numeroDocumento, string codigoEquipo, string numeroSerial, out string mensaje)
+        {
+            bool resultado = false;
+            mensaje = string.Empty;
+
+            using (SqlConnection conexion = new SqlConnection(Conexion.cadena))
+            {
+                try
+                {
+                    SqlCommand cmd = new SqlCommand("SP_LIMPIAR_ESTADO_Y_MOTIVO_PRESTAMO", conexion);
+                    cmd.CommandType = CommandType.StoredProcedure;
+
+                    cmd.Parameters.AddWithValue("@NumeroDocumento", numeroDocumento);
+                    cmd.Parameters.AddWithValue("@CodigoEquipo", codigoEquipo);
+                    cmd.Parameters.AddWithValue("@NumeroSerial", numeroSerial);
+
+                    SqlParameter paramResultado = new SqlParameter("@Resultado", SqlDbType.Bit) { Direction = ParameterDirection.Output };
+                    SqlParameter paramMensaje = new SqlParameter("@Mensaje", SqlDbType.VarChar, 500) { Direction = ParameterDirection.Output };
+
+                    cmd.Parameters.Add(paramResultado);
+                    cmd.Parameters.Add(paramMensaje);
+
+                    conexion.Open();
+                    cmd.ExecuteNonQuery();
+
+                    resultado = Convert.ToBoolean(paramResultado.Value);
+                    mensaje = paramMensaje.Value.ToString();
+                }
+                catch (Exception ex)
+                {
+                    resultado = false;
+                    mensaje = "Error al ejecutar procedimiento: " + ex.Message;
+                }
+            }
+
+            return resultado;
+        }
+
+        public bool AutorizarBaja(string numeroDocumento, string codigoEquipo, string numeroSerial, int idUsuarioAutoriza)
+        {
+            using (SqlConnection conexion = new SqlConnection(Conexion.cadena))
+            {
+                try
+                {
+                    SqlCommand cmd = new SqlCommand("SP_AUTORIZAR_EQUIPO_PRESTAMO", conexion);
+                    cmd.CommandType = CommandType.StoredProcedure;
+
+                    cmd.Parameters.AddWithValue("@NumeroDocumento", numeroDocumento);
+                    cmd.Parameters.AddWithValue("@CodigoEquipo", codigoEquipo);
+                    cmd.Parameters.AddWithValue("@NumeroSerial", numeroSerial);
+                    cmd.Parameters.AddWithValue("@IdUsuarioAutoriza", idUsuarioAutoriza);
+
+                    conexion.Open();
+                    cmd.ExecuteNonQuery();
+                    return true;
+                }
+                catch
+                {
+                    return false;
+                }
+            }
+        }
+
+
+        public List<Detalle_Prestamo> ObtenerEquiposPrestamoAutorizados()
+        {
+            List<Detalle_Prestamo> lista = new List<Detalle_Prestamo>();
+
+            using (SqlConnection conexion = new SqlConnection(Conexion.cadena))
+            {
+                try
+                {
+                    SqlCommand cmd = new SqlCommand("SP_OBTENER_EQUIPOS_PRESTAMO_AUTORIZADOS", conexion);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    conexion.Open();
+
+                    using (SqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        while (dr.Read())
+                        {
+                            lista.Add(new Detalle_Prestamo()
+                            {
+                                NumeroDocumento = dr["NumeroDocumento"].ToString(),
+                                FechaRegistro = dr["FechaRegistro"] == DBNull.Value ? DateTime.MinValue : Convert.ToDateTime(dr["FechaRegistro"]),
+                                oFarmacia = new Farmacia() { Nombre = dr["NombreFarmacia"]?.ToString() ?? "" },
+                                oEquipo = new Equipo()
+                                {
+                                    Codigo = dr["CodigoEquipo"].ToString(),
+                                    Nombre = dr["NombreEquipo"].ToString(),
+                                    oMarca = new Marca { Descripcion = dr["MarcaEquipo"]?.ToString() ?? "" },
+                                },
+                                Cantidad = dr["Cantidad"] == DBNull.Value ? 0 : Convert.ToInt32(dr["Cantidad"]),
+                                NumeroSerial = dr["NumeroSerial"]?.ToString() ?? "",
+                                MotivoBaja = dr["MotivoBaja"]?.ToString() ?? "",
+                                EstadoBaja = dr["EstadoBaja"]?.ToString() ?? "",
+                                oUsuarioSolicitante = new Usuario { NombreCompleto = dr["UsuarioSolicitante"]?.ToString() ?? "" },
+                                oUsuarioAutorizador = new Usuario { NombreCompleto = dr["UsuarioAutorizador"] == DBNull.Value ? "" : dr["UsuarioAutorizador"].ToString() }
+                            });
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception("Error al obtener equipos de préstamo autorizados", ex);
+                }
+            }
+
+            return lista;
+        }
+
     }
 }

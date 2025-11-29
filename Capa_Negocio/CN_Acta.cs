@@ -39,7 +39,7 @@ namespace CapaNegocio
        
         public bool AutorizarBaja(string numeroDocumento, string codigoEquipo, string numeroSerial, int idUsuarioAutorizo)
         {
-            return new CD_Acta().ActualizarEstadoBaja(numeroDocumento, codigoEquipo, numeroSerial, idUsuarioAutorizo);
+            return new CD_Acta().AutorizarBaja(numeroDocumento, codigoEquipo, numeroSerial, idUsuarioAutorizo);
         }
 
         public List<Detalle_Acta> ObtenerEquiposAutorizados()
@@ -95,11 +95,12 @@ namespace CapaNegocio
             return objcd_Acta.CambiarEstadoEquipo(numeroDocumento, codigoEquipo, numeroSerial, nuevoEstado, motivo);
         }
 
-        public bool LimpiarMotivoYEstado(string numeroDocumento, string codigoEquipo, string numeroSerial)
+        public bool LimpiarMotivoYEstado(string numeroDocumento, string codigoEquipo, string numeroSerial, out string mensaje)
         {
-            return objcd_Acta.LimpiarMotivoYEstado(numeroDocumento, codigoEquipo, numeroSerial);
+            return objcd_Acta.LimpiarMotivoYEstado(numeroDocumento, codigoEquipo, numeroSerial, out mensaje);
         }
-     
+
+
         public List<Detalle_Acta> ObtenerEquiposPendientes()
         {
             return objcd_Acta.ObtenerEquiposPendientes();

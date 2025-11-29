@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Xml.Linq;
 
 namespace CapaNegocio
 {
@@ -68,5 +69,49 @@ namespace CapaNegocio
             return objcd.DevolverEquipoPrestamo(numeroDocumento, codigoEquipo, numeroSerial, idUsuarioDevuelve,  out mensaje);
            
         }
+
+        public bool MarcarPrestamoEquipoComoEnEspera(string documento, string codigoEquipo, string numeroSerial, string motivo, int idUsuario, out string mensaje)
+        {
+            try
+            {
+                bool ok = objcd.MarcarPrestamoEquipoComoEnEspera(documento, codigoEquipo, numeroSerial, motivo, idUsuario);
+                mensaje = ok ? "Equipo marcado como 'En espera' correctamente." : "No se pudo marcar el equipo.";
+                return ok;
+            }
+            catch (Exception ex)
+            {
+                mensaje = ex.Message;
+                return false;
+            }
+        }
+
+        // Obtener equipos de PRESTAMO en estado "En espera"
+        public List<Detalle_Prestamo> ObtenerEquiposPrestamoEnEspera()
+        {
+            try
+            {
+                return objcd.ObtenerEquiposPrestamoEnEspera();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error en la capa de negocio al obtener los préstamos en espera: " + ex.Message);
+            }
+        }
+
+        public bool AutorizarBaja(string numeroDocumento, string codigoEquipo, string numeroSerial, int idUsuarioAutoriza)
+        {
+            return objcd.AutorizarBaja(numeroDocumento, codigoEquipo, numeroSerial, idUsuarioAutoriza);
+        }
+
+        public bool LimpiarMotivoYEstado(string numeroDocumento, string codigoEquipo, string numeroSerial, out string mensaje)
+        {
+            return objcd.LimpiarMotivoYEstado(numeroDocumento, codigoEquipo, numeroSerial, out mensaje);
+        }
+
+        public List<Detalle_Prestamo> ObtenerEquiposPrestamoAutorizados()
+        {
+            return new CD_Prestamo().ObtenerEquiposPrestamoAutorizados();
+        }
+
     }
 }

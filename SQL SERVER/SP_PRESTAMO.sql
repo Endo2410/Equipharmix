@@ -348,6 +348,36 @@ BEGIN
 END
 GO
 
+alter PROCEDURE SP_LISTAR_PRESTAMOS_AUTORIZADOS
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT
+        P.NumeroDocumento,
+        P.FechaPrestamo AS FechaPrestamo,
+        F.Nombre AS NombreFarmacia,
+        E.IdEquipo,
+        E.Codigo AS CodigoEquipo,
+        E.Nombre AS NombreEquipo,
+        M.Descripcion AS MarcaEquipo,
+        DP.Cantidad,
+        DP.NumeroSerial,
+        DP.MotivoBaja,
+        DP.EstadoBaja,
+        U.NombreCompleto AS NombreCompleto
+    FROM PRESTAMO P
+    INNER JOIN DETALLE_PRESTAMO DP ON P.IdPrestamo = DP.IdPrestamo
+    INNER JOIN EQUIPO E ON E.IdEquipo = DP.IdEquipo
+    INNER JOIN MARCA M ON E.IdMarca = M.IdMarca
+    INNER JOIN ESTADO ES ON ES.IdEstado = E.IdEstado
+    LEFT JOIN FARMACIA F ON P.IdFarmacia = F.IdFarmacia
+    INNER JOIN USUARIO U ON P.IdUsuarioSolicita = U.IdUsuario
+    WHERE P.EstadoPrestamo = 'AUTORIZADO'
+    ORDER BY P.FechaPrestamo DESC;
+END
+
+
 CREATE PROCEDURE SP_DEVOLVER_EQUIPO_PRESTAMO
 (
     @NumeroDocumento VARCHAR(100),
@@ -437,3 +467,253 @@ BEGIN
     END CATCH
 END
 GO
+
+
+/****************** PROCEDIMIENTO PARA MARCAR EQUIPO EN ESPERA (PRÉSTAMO) ******************/
+CREATE PROCEDURE SP_MARCAR_PRESTAMO_EN_ESPERA
+    @NumeroDocumento     VARCHAR(50),
+    @CodigoEquipo        VARCHAR(50),
+    @NumeroSerial        VARCHAR(50),
+    @MotivoBaja          VARCHAR(MAX),
+    @IdUsuarioSolicita   INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    BEGIN TRY
+        DECLARE @FilasActualizadas INT;
+
+        UPDATE DP
+        SET 
+            MotivoBaja = @MotivoBaja,
+            EstadoBaja = 'EN ESPERA',
+            IdUsuarioDevuelve = @IdUsuarioSolicita
+        FROM DETALLE_PRESTAMO DP
+        INNER JOIN PRESTAMO P ON P.IdPrestamo = DP.IdPrestamo
+        INNER JOIN EQUIPO E ON E.IdEquipo = DP.IdEquipo
+        WHERE 
+            P.NumeroDocumento = @NumeroDocumento
+            AND E.Codigo = @CodigoEquipo
+            AND DP.NumeroSerial = @NumeroSerial;
+
+        SET @FilasActualizadas = @@ROWCOUNT;
+
+        SELECT @FilasActualizadas AS FilasActualizadas;
+    END TRY
+    BEGIN CATCH
+        DECLARE @ErrorMessage NVARCHAR(4000) = ERROR_MESSAGE();
+        RAISERROR('Error al marcar el equipo en espera: %s', 16, 1, @ErrorMessage);
+    END CATCH
+END
+GO
+
+
+/****************** PROCEDIMIENTO PARA OBTENER EQUIPOS DE PRÉSTAMO EN ESPERA ******************/
+CREATE PROCEDURE SP_OBTENER_EQUIPOS_PRESTAMO_EN_ESPERA
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    BEGIN TRY
+        SELECT 
+            P.NumeroDocumento,
+            P.FechaPrestamo,
+            DP.FechaRegistro,
+            F.Nombre AS NombreFarmacia,
+            E.Codigo AS CodigoEquipo,
+            E.Nombre AS NombreEquipo,
+            M.Descripcion AS Marca,
+            DP.Cantidad,
+            DP.NumeroSerial,
+            DP.MotivoBaja,
+            DP.EstadoBaja,
+            U.NombreCompleto AS UsuarioSolicitante
+        FROM PRESTAMO P
+        INNER JOIN DETALLE_PRESTAMO DP ON P.IdPrestamo = DP.IdPrestamo
+        INNER JOIN EQUIPO E ON DP.IdEquipo = E.IdEquipo
+        INNER JOIN MARCA M ON E.IdMarca = M.IdMarca
+        LEFT JOIN USUARIO U ON DP.IdUsuarioDevuelve = U.IdUsuario
+        LEFT JOIN FARMACIA F ON P.IdFarmacia = F.IdFarmacia
+        WHERE LTRIM(RTRIM(UPPER(DP.EstadoBaja))) = 'EN ESPERA'
+        ORDER BY DP.FechaRegistro DESC;
+    END TRY
+    BEGIN CATCH
+        PRINT 'Error al obtener los equipos de préstamo en espera: ' + ERROR_MESSAGE();
+    END CATCH
+END
+GO
+
+CREATE PROCEDURE SP_AUTORIZAR_EQUIPO_PRESTAMO
+    @NumeroDocumento VARCHAR(50),
+    @CodigoEquipo VARCHAR(50),
+    @NumeroSerial VARCHAR(50),
+    @IdUsuarioAutoriza INT  
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    BEGIN TRY
+        -- Verificar que exista el detalle
+        IF EXISTS (
+            SELECT 1
+            FROM DETALLE_PRESTAMO DP
+            INNER JOIN PRESTAMO P ON P.IdPrestamo = DP.IdPrestamo
+            INNER JOIN EQUIPO E ON E.IdEquipo = DP.IdEquipo
+            WHERE P.NumeroDocumento = @NumeroDocumento
+              AND E.Codigo = @CodigoEquipo
+              AND DP.NumeroSerial = @NumeroSerial
+        )
+        BEGIN
+            -- Actualizar EstadoBaja del detalle
+            UPDATE DP
+            SET EstadoBaja = 'Autorizado'
+            FROM DETALLE_PRESTAMO DP
+            INNER JOIN PRESTAMO P ON P.IdPrestamo = DP.IdPrestamo
+            INNER JOIN EQUIPO E ON E.IdEquipo = DP.IdEquipo
+            WHERE P.NumeroDocumento = @NumeroDocumento
+              AND E.Codigo = @CodigoEquipo
+              AND DP.NumeroSerial = @NumeroSerial;
+
+            -- Actualizar IdUsuarioAutoriza en la cabecera PRESTAMO
+            UPDATE P
+            SET IdUsuarioAutoriza = @IdUsuarioAutoriza
+            FROM PRESTAMO P
+            INNER JOIN DETALLE_PRESTAMO DP ON DP.IdPrestamo = P.IdPrestamo
+            INNER JOIN EQUIPO E ON E.IdEquipo = DP.IdEquipo
+            WHERE P.NumeroDocumento = @NumeroDocumento
+              AND E.Codigo = @CodigoEquipo
+              AND DP.NumeroSerial = @NumeroSerial;
+        END
+        ELSE
+        BEGIN
+            RAISERROR('No se encontró el equipo de préstamo con los datos proporcionados.', 16, 1);
+        END
+    END TRY
+    BEGIN CATCH
+        PRINT ERROR_MESSAGE();
+    END CATCH
+END
+GO
+
+
+/****************** PROCEDIMIENTO PARA LIMPIAR ESTADO Y MOTIVO DE PRÉSTAMO ******************/
+CREATE PROCEDURE SP_LIMPIAR_ESTADO_Y_MOTIVO_PRESTAMO
+(
+    @NumeroDocumento VARCHAR(50),
+    @CodigoEquipo VARCHAR(50),
+    @NumeroSerial VARCHAR(50),
+    @Resultado BIT OUTPUT,
+    @Mensaje VARCHAR(500) OUTPUT
+)
+AS
+BEGIN
+    BEGIN TRY
+        SET NOCOUNT ON;
+        SET @Resultado = 1;
+        SET @Mensaje = '';
+
+        DECLARE @Existe INT;
+
+        -- Verificar si existe el detalle
+        SELECT @Existe = COUNT(*)
+        FROM DETALLE_PRESTAMO DP
+        INNER JOIN PRESTAMO P ON P.IdPrestamo = DP.IdPrestamo
+        INNER JOIN EQUIPO E ON E.IdEquipo = DP.IdEquipo
+        WHERE P.NumeroDocumento = @NumeroDocumento
+          AND E.Codigo = @CodigoEquipo
+          AND DP.NumeroSerial = @NumeroSerial;
+
+        IF @Existe = 0
+        BEGIN
+            SET @Resultado = 0;
+            SET @Mensaje = 'No se encontró el detalle del equipo de préstamo.';
+            RETURN;
+        END
+
+        -- Limpiar estado y motivo
+        UPDATE DP
+        SET MotivoBaja = '',
+            EstadoBaja = ''
+        FROM DETALLE_PRESTAMO DP
+        INNER JOIN PRESTAMO P ON P.IdPrestamo = DP.IdPrestamo
+        INNER JOIN EQUIPO E ON E.IdEquipo = DP.IdEquipo
+        WHERE P.NumeroDocumento = @NumeroDocumento
+          AND E.Codigo = @CodigoEquipo
+          AND DP.NumeroSerial = @NumeroSerial;
+
+    END TRY
+    BEGIN CATCH
+        SET @Resultado = 0;
+        SET @Mensaje = ERROR_MESSAGE();
+    END CATCH
+END
+GO
+
+
+/****************** PROCEDIMIENTO PARA OBTENER EQUIPOS EN PRÉSTAMO ******************/
+/****************** PROCEDIMIENTO PARA OBTENER EQUIPOS DE PRÉSTAMO AUTORIZADOS ******************/
+CREATE PROCEDURE SP_OBTENER_EQUIPOS_PRESTAMO_AUTORIZADOS
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT 
+        P.NumeroDocumento,
+        P.FechaPrestamo AS FechaRegistro, -- Fecha de préstamo como FechaRegistro
+        F.Nombre AS NombreFarmacia,
+        E.Codigo AS CodigoEquipo,
+        E.Nombre AS NombreEquipo,
+        M.Descripcion AS MarcaEquipo,
+        DP.Cantidad,
+        DP.NumeroSerial,
+        DP.MotivoBaja,
+        DP.EstadoBaja,
+
+        -- SOLICITANTE
+        SOL.NombreCompleto AS UsuarioSolicitante,
+
+        -- AUTORIZADOR (desde cabecera PRESTAMO)
+        AUT.NombreCompleto AS UsuarioAutorizador
+    FROM DETALLE_PRESTAMO DP
+    INNER JOIN PRESTAMO P ON DP.IdPrestamo = P.IdPrestamo
+    INNER JOIN EQUIPO E ON DP.IdEquipo = E.IdEquipo
+    INNER JOIN MARCA M ON E.IdMarca = M.IdMarca
+    INNER JOIN USUARIO SOL ON DP.IdUsuarioDevuelve = SOL.IdUsuario
+    LEFT JOIN USUARIO AUT ON P.IdUsuarioAutoriza = AUT.IdUsuario
+    LEFT JOIN FARMACIA F ON P.IdFarmacia = F.IdFarmacia
+    WHERE LTRIM(RTRIM(UPPER(DP.EstadoBaja))) = 'AUTORIZADO'
+    ORDER BY DP.FechaRegistro DESC;
+END
+GO
+
+CREATE PROCEDURE SP_OBTENER_REPORTE_PRESTAMO
+(
+    @FechaInicio DATE,
+    @FechaFin DATE
+)
+AS
+BEGIN
+    SELECT 
+        P.NumeroDocumento,
+        P.FechaPrestamo AS FechaRegistro,
+        F.Nombre AS NombreFarmacia,
+        E.Codigo AS CodigoEquipo,
+        E.Nombre AS NombreEquipo,
+        DP.Cantidad,
+        DP.NumeroSerial,
+        P.EstadoPrestamo,
+        U.NombreCompleto AS NombreCompleto
+    FROM PRESTAMO P
+    INNER JOIN FARMACIA F ON P.IdFarmacia = F.IdFarmacia
+    INNER JOIN DETALLE_PRESTAMO DP ON P.IdPrestamo = DP.IdPrestamo
+    INNER JOIN EQUIPO E ON E.IdEquipo = DP.IdEquipo
+    INNER JOIN USUARIO U ON U.IdUsuario = P.IdUsuarioAutoriza
+    WHERE P.EstadoPrestamo = 'AUTORIZADO'
+      AND P.FechaPrestamo >= @FechaInicio
+      AND P.FechaPrestamo < DATEADD(DAY, 1, @FechaFin)
+END
+GO
+
+
+select * from ACTA
+select * from DETALLE_ACTA

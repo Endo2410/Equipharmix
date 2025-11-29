@@ -102,7 +102,6 @@ namespace CapaPresentacion
                         txtidequipo.Text = oEquipo.IdEquipo.ToString();
                         txtequipo.Text = oEquipo.Nombre;
                         txtstock.Text = oEquipo.Stock.ToString();
-                        txtnumeroserial.Select(); // → Prepararse para que ingrese cantidad
                     }
                     else
                     {
@@ -124,17 +123,9 @@ namespace CapaPresentacion
         {
             try
             {
-                bool producto_existe = false;
-
                 if (int.Parse(txtidequipo.Text) == 0)
                 {
-                    MessageBox.Show("Debe seleccionar un producto", "Mensaje", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                    return;
-                }
-
-                if (string.IsNullOrWhiteSpace(txtnumeroserial.Text))
-                {
-                    MessageBox.Show("Debe ingresar el número de serie", "Mensaje", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    MessageBox.Show("Debe seleccionar un equipo", "Mensaje", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                     return;
                 }
 
@@ -152,9 +143,7 @@ namespace CapaPresentacion
                 foreach (DataGridViewRow fila in dgvdata.Rows)
                 {
                     if (fila.Cells["IdEquipo"].Value.ToString() == txtidequipo.Text)
-                    {
                         cantidadAcumulada += Convert.ToInt32(fila.Cells["Cantidad"].Value);
-                    }
                 }
 
                 if (cantidadAcumulada + cantidadSolicitada > stockDisponible)
@@ -163,34 +152,20 @@ namespace CapaPresentacion
                     return;
                 }
 
-                // Verificar que no se repita la combinación IdEquipo + Serial + Caja
-                foreach (DataGridViewRow fila in dgvdata.Rows)
+                // Agregar fila al DataGridView con número de serie automático
+                for (int i = 0; i < cantidadSolicitada; i++)
                 {
-                    if (
-                        fila.Cells["IdEquipo"].Value.ToString() == txtidequipo.Text &&
-                        fila.Cells["NumeroSerial"].Value.ToString().Trim().ToUpper() == txtnumeroserial.Text.Trim().ToUpper() &&
-                        fila.Cells["Caja"].Value.ToString().Trim().ToUpper() == txtcaja.Text.Trim().ToUpper()
-                    )
+                    string numeroSerie = GenerarCodigoSerie(); // ← Aquí se genera automáticamente
+
+                    dgvdata.Rows.Add(new object[]
                     {
-                        producto_existe = true;
-                        break;
-                    }
+                txtidequipo.Text,
+                txtequipo.Text,
+                1,               // Cada fila 1 unidad
+                numeroSerie,     // Serie automática
+                txtcaja.Text
+                    });
                 }
-
-                if (producto_existe)
-                {
-                    MessageBox.Show("Este equipo con el mismo número de serie y caja ya fue agregado.", "Mensaje", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    return;
-                }
-
-                // Agregar al DataGridView sin afectar el stock real aún
-                dgvdata.Rows.Add(new object[] {
-                    txtidequipo.Text,
-                    txtequipo.Text,
-                    cantidadSolicitada.ToString(),
-                    txtnumeroserial.Text.Trim(),
-                    txtcaja.Text.Trim()
-                });
 
                 limpiarProducto();
                 txtcodEquipo.Select();
@@ -208,7 +183,6 @@ namespace CapaPresentacion
             txtequipo.Text = "";
             txtstock.Text = "";
             txtcantidad.Value = 1;
-            txtnumeroserial.Text = "";
             txtcaja.Text = "";
         }
 
@@ -238,16 +212,7 @@ namespace CapaPresentacion
                 int index = e.RowIndex;
                 if (index >= 0)
                 {
-                    bool respuesta = new CN_Acta().SumarStock(
-                    Convert.ToInt32(dgvdata.Rows[index].Cells["IdEquipo"].Value.ToString()),
-                    Convert.ToInt32(dgvdata.Rows[index].Cells["Cantidad"].Value.ToString()));
-
-
-                    if (respuesta)
-                    {
-                        dgvdata.Rows.RemoveAt(index);
-
-                    }
+                    dgvdata.Rows.RemoveAt(index);
                 }
             }
         }
@@ -288,7 +253,6 @@ namespace CapaPresentacion
                         oEquipo.IdEquipo,
                         oEquipo.Nombre,
                         cantidad.ToString(),
-                        txtnumeroserial.Text, // <- El número de serie visible en la tabla
                         txtcaja.Text // <- El número de serie visible en la tabla
                      });
                 }
@@ -397,6 +361,15 @@ namespace CapaPresentacion
             }
         }
 
-        
+        public string GenerarCodigoSerie()
+        {
+            // FS + año+mes+día+hora+minuto+segundo+milisegundos
+            return "FS" + DateTime.Now.ToString("yyyyMMddHHmmssfff");
+        }
+
+        private void label6_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

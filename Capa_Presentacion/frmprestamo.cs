@@ -103,7 +103,7 @@ namespace CapaPresentacion
                         txtidequipo.Text = oEquipo.IdEquipo.ToString();
                         txtequipo.Text = oEquipo.Nombre;
                         txtstock.Text = oEquipo.Stock.ToString();
-                        txtnumeroserial.Select(); // → Prepararse para que ingrese cantidad
+                        txtnumeroserial.Select(); // Prepararse para que ingrese cantidad
                     }
                     else
                     {
@@ -209,7 +209,7 @@ namespace CapaPresentacion
             if (e.RowIndex < 0)
                 return;
 
-            if (e.ColumnIndex == 5)
+            if (e.ColumnIndex == dgvdata.Columns["btneliminar"].Index)
             {
                 e.Paint(e.CellBounds, DataGridViewPaintParts.All);
 
@@ -230,16 +230,7 @@ namespace CapaPresentacion
                 int index = e.RowIndex;
                 if (index >= 0)
                 {
-                    bool respuesta = new CN_Acta().SumarStock(
-                    Convert.ToInt32(dgvdata.Rows[index].Cells["IdEquipo"].Value.ToString()),
-                    Convert.ToInt32(dgvdata.Rows[index].Cells["Cantidad"].Value.ToString()));
-
-
-                    if (respuesta)
-                    {
-                        dgvdata.Rows.RemoveAt(index);
-
-                    }
+                    dgvdata.Rows.RemoveAt(index);  
                 }
             }
         }
@@ -248,8 +239,8 @@ namespace CapaPresentacion
         {
             if (e.KeyCode == Keys.Enter)
             {
-                e.Handled = true;      // Marcar el evento como manejado
-                e.SuppressKeyPress = true; // Evitar que se procese más (no "salta")
+                e.Handled = true;      
+                e.SuppressKeyPress = true;
             }
         }
 

@@ -16,11 +16,14 @@ namespace CapaEntidad
         public string NumeroSerial { get; set; }
         public string EstadoDevolucion { get; set; }
         public DateTime FechaRegistro { get; set; }
-
+        public string EstadoBaja { get; set; }
+        public string MotivoBaja { get; set; }
         public Equipo oEquipo { get; set; }
+        public Prestamo oPrestamo { get; set; }
         public Farmacia oFarmacia { get; set; }
         public Usuario oUsuarioSolicitante { get; set; }
         public Usuario oUsuarioAutorizador { get; set; }
         public string EstadoAutorizacion { get; set; }
+        public DateTime FechaPrestamo { get; set; }
     }
 }

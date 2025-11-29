@@ -257,12 +257,8 @@ namespace CapaPresentacion
             string numeroSerial = txtserie.Text;
 
             // Obtén el Id del usuario activo. 
-            // Debes tener una variable global o sesión que almacene el usuario logueado
-            int idUsuarioSolicita = usuarioActual.IdUsuario;  // Ejemplo
+            int idUsuarioSolicita = usuarioActual.IdUsuario; 
 
-
-            //// Obtener el ID del usuario logueado, por ejemplo:
-            //int idUsuarioActual = usuarioActual.IdUsuario; // <-- Ajusta esta línea según cómo guardes el usuario
 
             bool resultado = objCN_Acta.MarcarEquipoComoEnEspera(documento, codigoEquipo, numeroSerial, motivo, idUsuarioSolicita);
 

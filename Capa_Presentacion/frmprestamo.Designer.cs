@@ -28,8 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.txtnumeroserial = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.txtstock = new System.Windows.Forms.TextBox();
@@ -76,7 +76,7 @@
             this.txtnumeroserial.Location = new System.Drawing.Point(273, 88);
             this.txtnumeroserial.Margin = new System.Windows.Forms.Padding(2);
             this.txtnumeroserial.Name = "txtnumeroserial";
-            this.txtnumeroserial.Size = new System.Drawing.Size(269, 20);
+            this.txtnumeroserial.Size = new System.Drawing.Size(258, 20);
             this.txtnumeroserial.TabIndex = 217;
             this.txtnumeroserial.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtnumeroserial_KeyDown);
             // 
@@ -91,16 +91,16 @@
             // 
             // txtstock
             // 
-            this.txtstock.Location = new System.Drawing.Point(307, 46);
+            this.txtstock.Location = new System.Drawing.Point(300, 45);
             this.txtstock.Name = "txtstock";
             this.txtstock.ReadOnly = true;
-            this.txtstock.Size = new System.Drawing.Size(99, 20);
+            this.txtstock.Size = new System.Drawing.Size(89, 20);
             this.txtstock.TabIndex = 5;
             // 
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(304, 30);
+            this.label7.Location = new System.Drawing.Point(297, 29);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(38, 13);
             this.label7.TabIndex = 100;
@@ -124,7 +124,7 @@
             this.groupBox3.Controls.Add(this.label7);
             this.groupBox3.Location = new System.Drawing.Point(221, 177);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(679, 117);
+            this.groupBox3.Size = new System.Drawing.Size(640, 117);
             this.groupBox3.TabIndex = 227;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Informacion de Equipo";
@@ -137,7 +137,7 @@
             this.btnagregarequipo.IconFont = FontAwesome.Sharp.IconFont.Auto;
             this.btnagregarequipo.IconSize = 30;
             this.btnagregarequipo.ImageAlign = System.Drawing.ContentAlignment.BottomCenter;
-            this.btnagregarequipo.Location = new System.Drawing.Point(566, 30);
+            this.btnagregarequipo.Location = new System.Drawing.Point(550, 31);
             this.btnagregarequipo.Name = "btnagregarequipo";
             this.btnagregarequipo.Size = new System.Drawing.Size(74, 81);
             this.btnagregarequipo.TabIndex = 214;
@@ -160,7 +160,7 @@
             this.btnbuscarequipo.IconColor = System.Drawing.Color.Black;
             this.btnbuscarequipo.IconFont = FontAwesome.Sharp.IconFont.Auto;
             this.btnbuscarequipo.IconSize = 18;
-            this.btnbuscarequipo.Location = new System.Drawing.Point(241, 39);
+            this.btnbuscarequipo.Location = new System.Drawing.Point(232, 39);
             this.btnbuscarequipo.Name = "btnbuscarequipo";
             this.btnbuscarequipo.Padding = new System.Windows.Forms.Padding(0, 5, 0, 0);
             this.btnbuscarequipo.Size = new System.Drawing.Size(49, 24);
@@ -195,7 +195,7 @@
             // 
             // txtcantidad
             // 
-            this.txtcantidad.Location = new System.Drawing.Point(426, 47);
+            this.txtcantidad.Location = new System.Drawing.Point(415, 46);
             this.txtcantidad.Maximum = new decimal(new int[] {
             1000,
             0,
@@ -219,7 +219,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(423, 31);
+            this.label5.Location = new System.Drawing.Point(412, 30);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(52, 13);
             this.label5.TabIndex = 98;
@@ -306,7 +306,7 @@
             this.groupBox2.Controls.Add(this.txtnombrecliente);
             this.groupBox2.Controls.Add(this.label15);
             this.groupBox2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.groupBox2.Location = new System.Drawing.Point(551, 96);
+            this.groupBox2.Location = new System.Drawing.Point(512, 96);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(349, 75);
             this.groupBox2.TabIndex = 226;
@@ -323,7 +323,7 @@
             this.groupBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.groupBox1.Location = new System.Drawing.Point(221, 96);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(314, 75);
+            this.groupBox1.Size = new System.Drawing.Size(281, 75);
             this.groupBox1.TabIndex = 225;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Información de Acta";
@@ -334,7 +334,7 @@
             this.txtfecha.Location = new System.Drawing.Point(9, 39);
             this.txtfecha.Name = "txtfecha";
             this.txtfecha.ReadOnly = true;
-            this.txtfecha.Size = new System.Drawing.Size(120, 21);
+            this.txtfecha.Size = new System.Drawing.Size(106, 21);
             this.txtfecha.TabIndex = 90;
             // 
             // label3
@@ -354,7 +354,7 @@
             this.cbotipodocumento.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbotipodocumento.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cbotipodocumento.FormattingEnabled = true;
-            this.cbotipodocumento.Location = new System.Drawing.Point(138, 39);
+            this.cbotipodocumento.Location = new System.Drawing.Point(124, 39);
             this.cbotipodocumento.Name = "cbotipodocumento";
             this.cbotipodocumento.Size = new System.Drawing.Size(132, 23);
             this.cbotipodocumento.TabIndex = 93;
@@ -364,7 +364,7 @@
             this.label4.AutoSize = true;
             this.label4.BackColor = System.Drawing.Color.White;
             this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label4.Location = new System.Drawing.Point(137, 21);
+            this.label4.Location = new System.Drawing.Point(123, 21);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(101, 15);
             this.label4.TabIndex = 91;
@@ -378,7 +378,7 @@
             this.label10.Location = new System.Drawing.Point(209, 23);
             this.label10.Name = "label10";
             this.label10.Padding = new System.Windows.Forms.Padding(6, 0, 0, 0);
-            this.label10.Size = new System.Drawing.Size(717, 623);
+            this.label10.Size = new System.Drawing.Size(691, 623);
             this.label10.TabIndex = 223;
             // 
             // btncrearventa
@@ -389,7 +389,7 @@
             this.btncrearventa.IconFont = FontAwesome.Sharp.IconFont.Auto;
             this.btncrearventa.IconSize = 30;
             this.btncrearventa.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.btncrearventa.Location = new System.Drawing.Point(802, 599);
+            this.btncrearventa.Location = new System.Drawing.Point(763, 599);
             this.btncrearventa.Name = "btncrearventa";
             this.btncrearventa.Padding = new System.Windows.Forms.Padding(0, 2, 0, 0);
             this.btncrearventa.Size = new System.Drawing.Size(98, 36);
@@ -403,15 +403,15 @@
             // 
             this.dgvdata.AllowUserToAddRows = false;
             this.dgvdata.BackgroundColor = System.Drawing.Color.White;
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle3.Padding = new System.Windows.Forms.Padding(2);
-            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dgvdata.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.Padding = new System.Windows.Forms.Padding(2);
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dgvdata.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.dgvdata.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvdata.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.IdEquipo,
@@ -424,11 +424,11 @@
             this.dgvdata.Name = "dgvdata";
             this.dgvdata.ReadOnly = true;
             this.dgvdata.RowHeadersWidth = 51;
-            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.Color.White;
-            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.Color.Black;
-            this.dgvdata.RowsDefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.Color.White;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.Color.Black;
+            this.dgvdata.RowsDefaultCellStyle = dataGridViewCellStyle2;
             this.dgvdata.RowTemplate.Height = 28;
-            this.dgvdata.Size = new System.Drawing.Size(670, 281);
+            this.dgvdata.Size = new System.Drawing.Size(631, 281);
             this.dgvdata.TabIndex = 228;
             this.dgvdata.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvdata_CellContentClick);
             this.dgvdata.CellPainting += new System.Windows.Forms.DataGridViewCellPaintingEventHandler(this.dgvdata_CellPainting);
@@ -448,7 +448,7 @@
             this.Equipo.MinimumWidth = 6;
             this.Equipo.Name = "Equipo";
             this.Equipo.ReadOnly = true;
-            this.Equipo.Width = 125;
+            this.Equipo.Width = 160;
             // 
             // Cantidad
             // 
@@ -465,7 +465,7 @@
             this.NumeroSerial.MinimumWidth = 6;
             this.NumeroSerial.Name = "NumeroSerial";
             this.NumeroSerial.ReadOnly = true;
-            this.NumeroSerial.Width = 200;
+            this.NumeroSerial.Width = 250;
             // 
             // btneliminar
             // 

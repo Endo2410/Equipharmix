@@ -164,11 +164,11 @@ namespace CapaPresentacion.Modales
         private void btnAutoriza_Click(object sender, EventArgs e)
         {
             DialogResult confirmacion = MessageBox.Show(
-        "¿Está seguro que desea autorizar los equipos seleccionados y eliminar los no seleccionados?",
-        "Confirmar Autorización",
-        MessageBoxButtons.YesNo,
-        MessageBoxIcon.Question
-    );
+                "¿Está seguro que desea autorizar los equipos seleccionados y eliminar los no seleccionados?",
+                "Confirmar Autorización",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question
+            );
 
             if (confirmacion != DialogResult.Yes)
                 return;

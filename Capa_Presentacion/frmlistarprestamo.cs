@@ -51,6 +51,14 @@ namespace CapaPresentacion
                 {
                     foreach (Detalle_Prestamo dp in p.oDetalle)
                     {
+                        // Filtrar: no mostrar los que ya están autorizados
+                        if (!string.IsNullOrEmpty(dp.EstadoBaja) &&
+                            dp.EstadoBaja.Equals("AUTORIZADO", StringComparison.OrdinalIgnoreCase))
+                        {
+                            continue; 
+                        }
+
+
                         dgvdata.Rows.Add(new object[] {
                             "",                 // btnseleccionar
                             p.IdPrestamo,       // Id
@@ -63,8 +71,18 @@ namespace CapaPresentacion
                             dp.oEquipo.oMarca.Descripcion,
                             dp.Cantidad,
                             dp.NumeroSerial,
-                            p.oUsuario.NombreCompleto
+                            p.oUsuario.NombreCompleto,
+                            dp.MotivoBaja,
+                            dp.EstadoBaja
                         });
+
+                        // Pintar amarillo si está en espera
+                        int rowIndex = dgvdata.Rows.Count - 1;
+                        if (!string.IsNullOrEmpty(dp.EstadoBaja) &&
+                            dp.EstadoBaja.Equals("EN ESPERA", StringComparison.OrdinalIgnoreCase))
+                        {
+                            dgvdata.Rows[rowIndex].DefaultCellStyle.BackColor = Color.Yellow;
+                        }
                     }
                 }
             }
@@ -120,6 +138,26 @@ namespace CapaPresentacion
                     txtcantidad.Text = row.Cells["Cantidad"].Value?.ToString();
                     txtserial.Text = row.Cells["NumeroSerial"].Value?.ToString();
                     txtusuario.Text = row.Cells["NombreCompleto"].Value?.ToString();
+
+                    string motivoBaja = row.Cells["MotivoBaja"].Value?.ToString();
+                    string estadoBaja = row.Cells["EstadoBaja"].Value?.ToString();
+                    
+
+                    if (!string.IsNullOrEmpty(estadoBaja) &&
+                        estadoBaja.Equals("EN ESPERA", StringComparison.OrdinalIgnoreCase))
+                    {
+                        lblmotivo.Visible = true;
+                        txtmotivo.Visible = true;
+                        txtmotivo.Text = motivoBaja;
+                        btnguardarmotivo.Visible = true;
+                    }
+                    else
+                    {
+                        lblmotivo.Visible = false;
+                        txtmotivo.Visible = false;
+                        txtmotivo.Text = "";
+                        btnguardarmotivo.Visible = false;
+                    }
                 }
 
             }
@@ -228,6 +266,92 @@ namespace CapaPresentacion
             else
             {
                 MessageBox.Show(mensaje, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void btneliminar_Click(object sender, EventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(txtcodigo.Text))
+            {
+                MessageBox.Show("Seleccione un equipo del préstamo para dar de baja.");
+                return;
+            }
+
+            lblmotivo.Visible = true;
+            txtmotivo.Visible = true;
+            btnguardarmotivo.Visible = true;
+        }
+
+        private void btnguardarmotivo_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                string motivo = txtmotivo.Text.Trim();
+
+                if (string.IsNullOrEmpty(motivo))
+                {
+                    MessageBox.Show("Debe ingresar el motivo de baja.", "Mensaje", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                string documento = txtdocumento.Text;
+                string codigoEquipo = txtcodigo.Text;
+                string numeroSerial = txtserial.Text;
+
+                int idUsuarioSolicita = _UsuarioActual.IdUsuario;
+
+                // Declarar variable para recibir mensaje del método
+                string mensaje;
+
+                // Llamar al método de negocio con out string mensaje
+                bool resultado = objcn_Prestamo.MarcarPrestamoEquipoComoEnEspera(documento, codigoEquipo, numeroSerial, motivo, idUsuarioSolicita, out mensaje);
+
+                if (resultado)
+                {
+                    MessageBox.Show(mensaje, "Información", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                    // Actualizar la fila visualmente
+                    if (int.TryParse(txtindice.Text, out int indice) && indice >= 0 && indice < dgvdata.Rows.Count)
+                    {
+                        DataGridViewRow fila = dgvdata.Rows[indice];
+                        fila.Cells["MotivoBaja"].Value = motivo;
+                        fila.Cells["EstadoBaja"].Value = "EN ESPERA";
+
+                        // Pintar fila de amarillo y forzar refresco
+                        fila.DefaultCellStyle.BackColor = Color.Yellow;
+                        dgvdata.InvalidateRow(indice);
+                    }
+
+                    // Ocultar y limpiar controles
+                    txtmotivo.Clear();
+                    txtmotivo.Visible = false;
+                    lblmotivo.Visible = false;
+                    btnguardarmotivo.Visible = false;
+                }
+                else
+                {
+                    // Mostrar mensaje de error
+                    MessageBox.Show(mensaje, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Ocurrió un error al guardar el motivo:\n" + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void dgvdata_RowPrePaint(object sender, DataGridViewRowPrePaintEventArgs e)
+        {
+            var row = dgvdata.Rows[e.RowIndex];
+            string estadoBaja = row.Cells["EstadoBaja"].Value?.ToString().Trim().ToUpper();
+
+            if (estadoBaja == "EN ESPERA")
+            {
+                row.DefaultCellStyle.BackColor = Color.Yellow;
+            }
+            else
+            {
+                row.DefaultCellStyle.BackColor = Color.White; // Color normal de la fila
             }
         }
     }

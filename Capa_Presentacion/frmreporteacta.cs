@@ -67,9 +67,9 @@ namespace CapaPresentacion
             dgvdata.RowsDefaultCellStyle.ForeColor = Color.Black;
             dgvdata.RowsDefaultCellStyle.BackColor = Color.White;
 
-            // Permisos
-            List<Permiso> listaPermisos = new CN_Permiso().Listar(Inicio.usuarioActual.IdUsuario);
-            btnexportar.Visible = UtilPermisos.TienePermisoAccion(listaPermisos, "submenureporteacta", "btnexportar");
+            //// Permisos
+            //List<Permiso> listaPermisos = new CN_Permiso().Listar(Inicio.usuarioActual.IdUsuario);
+            //btnexportar.Visible = UtilPermisos.TienePermisoAccion(listaPermisos, "submenureporteacta", "btnexportar");
 
             try
             {

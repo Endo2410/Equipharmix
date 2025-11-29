@@ -290,6 +290,28 @@ namespace CapaPresentacion.Properties {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a &lt;!DOCTYPE html&gt;
+        ///&lt;html&gt;
+        ///&lt;head&gt;
+        ///    &lt;style&gt;
+        ///        table.border { border-collapse: collapse; width: 100%; }
+        ///        table.border th { border: 1px solid black; padding: 5px; text-align: center; background-color: #CACACA; font-size: 12px; }
+        ///        table.border td { border: 1px solid black; padding: 5px; text-align: center; font-size: 10px; }
+        ///    &lt;/style&gt;
+        ///&lt;/head&gt;
+        ///&lt;body&gt;
+        ///    &lt;!-- Encabezado --&gt;
+        ///    &lt;table style=&quot;width:100%; border:0; margin-bottom:5px;&quot;&gt;
+        ///        &lt;tr&gt;
+        ///            &lt;td style=&quot;width:15 [resto de la cadena truncado]&quot;;.
+        /// </summary>
+        internal static string PlantillaPrestamos {
+            get {
+                return ResourceManager.GetString("PlantillaPrestamos", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca un recurso adaptado de tipo System.Byte[].
         /// </summary>
         internal static byte[] PlantillaProducto {

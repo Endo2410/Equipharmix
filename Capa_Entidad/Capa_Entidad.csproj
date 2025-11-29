@@ -51,6 +51,7 @@
     <Compile Include="Farmacia.cs" />
     <Compile Include="Modulo.cs" />
     <Compile Include="Prestamo.cs" />
+    <Compile Include="Prestamo_Reporte.cs" />
     <Compile Include="Registrar.cs" />
     <Compile Include="Detalle_Registrar.cs" />
     <Compile Include="Detalle_Acta.cs" />
